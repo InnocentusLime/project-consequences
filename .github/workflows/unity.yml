@@ -46,6 +46,8 @@ jobs:
           unityVersion: ${{ matrix.unityVersion }}
           targetPlatform: ${{ matrix.targetPlatform }}
           customParameters: '-myParameter myValue -myBoolean -ThirdParameter andItsValue'
+      - name: "Prop"
+        run: ls .
       - uses: actions/upload-artifact@v2
         with:
           name: Build
