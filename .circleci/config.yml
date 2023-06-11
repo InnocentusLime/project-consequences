@@ -1,7 +1,12 @@
-setup:
+setup: true
+version: 2.1
+orbs:
+  continuation: circleci/continuation@0.2.0
+workflows:
+  setup:
     jobs:
       - continuation/continue:
-          configuration_path: ".circleci/build.yml"
+          configuration_path: ".circleci/main.yml"
           parameters: /home/circleci/params.json
           pre-steps:
             - run:
