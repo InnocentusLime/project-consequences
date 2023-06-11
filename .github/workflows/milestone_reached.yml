@@ -11,7 +11,7 @@ jobs:
         id: create-release-milestone
         uses: ecampidoglio/auto-release-milestone@v1
         with:
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          repo-token: ${{ secrets.AUTODEPLOY_TOKEN }}
       - name: Print the URL of the release draft
         if: steps.create-release-milestone.outputs.release-url != ''
         run: echo ${{ steps.create-release-draft.outputs.release-url }}
