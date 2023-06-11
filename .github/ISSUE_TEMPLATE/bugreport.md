@@ -1,6 +1,6 @@
 ---
 name: Bugreport
-about: Something has weant wrong when I played the game!
+about: Something went wrong when I was playing the game!
 title: 'BUG: '
 labels: bug
 assignees: ''
