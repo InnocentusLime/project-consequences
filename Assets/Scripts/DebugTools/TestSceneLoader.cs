@@ -1,37 +1,30 @@
-using System;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.Serialization;
 
-public class TestSceneLoader : DebugTool
-{
+public class TestSceneLoader : DebugTool {
     public override string Name => "TestSceneLoader";
 
-    private bool Show = false;
-    private Vector2 ScrollPosition;
+    private bool show;
+    private Vector2 scrollPosition;
     [SerializeField] private SceneAsset[] testRooms;
 
-    public override void ShowUi()
-    {
-        if (GUILayout.Button("Toggle"))
-        {
-            Show = !Show;
+    public override void ShowUi() {
+        if (GUILayout.Button("Toggle")) {
+            show = !show;
         }
 
-        if (!Show)
-        {
+        if (!show) {
             return;
         }
 
-        ScrollPosition = GUILayout.BeginScrollView(ScrollPosition);
-        foreach (SceneAsset scene in testRooms)
-        {
-            if (GUILayout.Button(scene.name))
-            {
+        scrollPosition = GUILayout.BeginScrollView(scrollPosition);
+        foreach (SceneAsset scene in testRooms) {
+            if (GUILayout.Button(scene.name)) {
                 SceneManager.LoadScene(scene.name);
             }
         }
+
         GUILayout.EndScrollView();
     }
 }

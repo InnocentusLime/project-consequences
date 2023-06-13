@@ -1,42 +1,35 @@
-﻿using System;
-using System.Linq;
-using UnityEditor;
+﻿using System.Linq;
 using UnityEngine;
 
-public abstract class DebugTool : MonoBehaviour
-{
+public abstract class DebugTool : MonoBehaviour {
     public abstract string Name { get; }
 
     public abstract void ShowUi();
 }
 
-public class DebugToolset : MonoBehaviour
-{
-    private int Curr = 0;
-    private static DebugToolset Instance;
-    private string[] DebugToolsNames;
-    private DebugTool[] DebugTools;
+public class DebugToolset : MonoBehaviour {
+    private int curr;
+    private static DebugToolset instance;
+    private string[] debugToolsNames;
+    private DebugTool[] debugTools;
 
-    private void Awake()
-    {
+    private void Awake() {
         // Singleton invariant
-        if (Instance != null)
-        {
+        if (instance != null) {
             Destroy(this.gameObject);
             return;
         }
 
-        Instance = this;
+        instance = this;
         DontDestroyOnLoad(this);
 
         // Actual initialization
-        DebugTools = GetComponents<DebugTool>();
-        DebugToolsNames = DebugTools.Select(x => x.Name).ToArray();
+        debugTools = GetComponents<DebugTool>();
+        debugToolsNames = debugTools.Select(x => x.Name).ToArray();
     }
 
-    private void OnGUI()
-    {
-        Curr = GUILayout.Toolbar(Curr, DebugToolsNames);
-        DebugTools[Curr].ShowUi();
+    private void OnGUI() {
+        curr = GUILayout.Toolbar(curr, debugToolsNames);
+        debugTools[curr].ShowUi();
     }
 }
