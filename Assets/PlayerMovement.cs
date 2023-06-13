@@ -26,7 +26,7 @@ public class PlayerMovement : MonoBehaviour {
         RaycastHit2D hit = Physics2D.BoxCast(transform.position, new Vector2(1, 2), 0, newRb * Time.deltaTime,
             newRb.magnitude * Time.deltaTime);
 
-        
+
 
         rb.velocity = newRb;
     }
