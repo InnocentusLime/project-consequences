@@ -31,6 +31,8 @@ public class ExitDoor : MonoBehaviour {
     }
 
     private void Interact() {
+        Debug.Log("Interacting with a door");
+
         room.Disable();
         adjacentDoor.Enter();
     }

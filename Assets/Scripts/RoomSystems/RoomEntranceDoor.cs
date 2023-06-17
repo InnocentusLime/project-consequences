@@ -21,6 +21,8 @@ public class RoomEntranceDoor : MonoBehaviour, IEntranceDoor {
     }
 
     public void Enter() {
+        Debug.Log("Entering a room through a door");
+
         room.Enable();
     }
 }
