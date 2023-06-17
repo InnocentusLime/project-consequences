@@ -9,7 +9,7 @@ public interface IEntranceDoor {
 
 public class ExitDoor : MonoBehaviour {
     private Room room;
-    [SerializeField, SerializeReference] private IEntranceDoor adjacentDoor;
+    [SerializeField, SerializeReference] public IEntranceDoor adjacentDoor;
 
     private void Awake() {
         GameObject parent = transform.parent.gameObject;
@@ -23,10 +23,6 @@ public class ExitDoor : MonoBehaviour {
 
         if (room == null) {
             Debug.LogError("Door's parent isn't a room");
-        }
-
-        if (adjacentDoor == null) {
-            Debug.LogWarning("Door's adjacent door is set to null");
         }
     }
 
