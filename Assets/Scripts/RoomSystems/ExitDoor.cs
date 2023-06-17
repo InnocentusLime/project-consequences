@@ -30,7 +30,7 @@ public class ExitDoor : MonoBehaviour {
         }
     }
 
-    void Interact() {
+    private void Interact() {
         room.Disable();
         adjacentDoor.Enter();
     }
