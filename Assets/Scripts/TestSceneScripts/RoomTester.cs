@@ -11,8 +11,6 @@ public class RoomTester : MonoBehaviour {
     public SceneAsset scene2;
 
     private Room[] rooms;
-    private ExitDoor[] exitDoors;
-    private IEntranceDoor[] entranceDoors;
 
     // Start is called before the first frame update
     void Start() {
@@ -31,20 +29,24 @@ public class RoomTester : MonoBehaviour {
             }
 
             rooms = new[] { room1, room2 };
-            room1.GetComponentInChildren<ExitDoor>().adjacentDoor = room2.GetComponentInChildren<IEntranceDoor>();
-            room2.GetComponentInChildren<ExitDoor>().adjacentDoor = GetComponent<IEntranceDoor>();
+            room1.GetComponentInChildren<ExitDoor>().adjacentDoor = room2.GetComponentInChildren<RoomEntranceDoor>().gameObject;
+            room2.GetComponentInChildren<ExitDoor>().adjacentDoor = GetComponent<FinishEntranceDoor>().gameObject;
 
-            rooms[0].GetComponentInChildren<IEntranceDoor>().Enter();
+            rooms[0].GetComponentInChildren<RoomEntranceDoor>().OnPlayerEnter(null);
 
             return;
         }
 
         if (Input.GetKeyDown(KeyCode.Alpha1)) {
-            rooms[0].GetComponentInChildren<ExitDoor>().Invoke("Interact", 0.0f);
+            rooms[0].GetComponentInChildren<ExitDoor>()
+                .gameObject
+                .SendMessage("OnInteract", null);
         }
 
         if (Input.GetKeyDown(KeyCode.Alpha2)) {
-            rooms[1].GetComponentInChildren<ExitDoor>().Invoke("Interact", 0.0f);
+            rooms[1].GetComponentInChildren<ExitDoor>()
+                .gameObject
+                .SendMessage("OnInteract", null);
         }
     }
 }
