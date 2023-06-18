@@ -466,7 +466,7 @@ Transform:
   m_GameObject: {fileID: 2029690547}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 2, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 549400496}
@@ -540,9 +540,9 @@ MonoBehaviour:
   isRightPressed: 0
   isLeftPressed: 0
   wasJumpPressed: 0
-  moveSpeed: 0
+  moveSpeed: 10
   gravity: 8
-  startJumpSpeed: 0
+  startJumpSpeed: 8
   groundMask:
     serializedVersion: 2
     m_Bits: 64
