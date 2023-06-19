@@ -7,10 +7,11 @@ using UnityEngine.SceneManagement;
 
 public class RoomTester : MonoBehaviour {
     [Header("Scenes")]
+    public GameObject player;
     public SceneAsset scene1;
     public SceneAsset scene2;
 
-    private Room[] rooms;
+    private bool roomsReady;
 
     // Start is called before the first frame update
     void Start() {
@@ -20,7 +21,8 @@ public class RoomTester : MonoBehaviour {
 
     // Update is called once per frame
     void Update() {
-        if (rooms == null) {
+        // FIXME ugly. We need a better working loader for the final game anyway.
+        if (!roomsReady) {
             Room room1 = Room.FindInScene(SceneManager.GetSceneAt(1));
             Room room2 = Room.FindInScene(SceneManager.GetSceneAt(2));
 
@@ -28,25 +30,14 @@ public class RoomTester : MonoBehaviour {
                 return;
             }
 
-            rooms = new[] { room1, room2 };
-            room1.GetComponentInChildren<ExitDoor>().adjacentDoor = room2.GetComponentInChildren<RoomEntranceDoor>().gameObject;
-            room2.GetComponentInChildren<ExitDoor>().adjacentDoor = GetComponent<FinishEntranceDoor>().gameObject;
+            // Connect the rooms
+            room1.GetComponentInChildren<ExitDoor>().adjacentDoor = room2.GetComponentInChildren<RoomEntranceDoor>();
+            room2.GetComponentInChildren<ExitDoor>().adjacentDoor = GetComponent<FinishEntranceDoor>();
 
-            rooms[0].GetComponentInChildren<RoomEntranceDoor>().OnPlayerEnter(null);
+            // Start the first room
+            room1.GetComponentInChildren<RoomEntranceDoor>().OnPlayerEnter(player);
 
-            return;
-        }
-
-        if (Input.GetKeyDown(KeyCode.Alpha1)) {
-            rooms[0].GetComponentInChildren<ExitDoor>()
-                .gameObject
-                .SendMessage("OnInteract", null);
-        }
-
-        if (Input.GetKeyDown(KeyCode.Alpha2)) {
-            rooms[1].GetComponentInChildren<ExitDoor>()
-                .gameObject
-                .SendMessage("OnInteract", null);
+            roomsReady = true;
         }
     }
 }
