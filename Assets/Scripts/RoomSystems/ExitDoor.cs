@@ -3,9 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+public interface IAdjacentDoor {
+    void OnPlayerEnter(GameObject player);
+}
+
 public class ExitDoor : MonoBehaviour {
     private Room room;
-    public GameObject adjacentDoor;
+    public IAdjacentDoor adjacentDoor;
 
     private void Awake() {
         GameObject parent = transform.parent.gameObject;
@@ -22,10 +26,11 @@ public class ExitDoor : MonoBehaviour {
         }
     }
 
-    private void OnInteract(GameObject interactor) {
+    public void OnInteract(GameObject actor) {
         Debug.Log("Interacting with a door");
 
         room.Disable();
-        adjacentDoor.SendMessage("OnPlayerEnter", interactor);
+        actor.SetActive(false);
+        adjacentDoor.OnPlayerEnter(actor);
     }
 }

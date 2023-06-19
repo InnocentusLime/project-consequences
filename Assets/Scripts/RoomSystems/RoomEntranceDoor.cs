@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class RoomEntranceDoor : MonoBehaviour {
+public class RoomEntranceDoor : MonoBehaviour, IAdjacentDoor {
     private Room room;
 
     private void Awake() {
@@ -23,6 +23,8 @@ public class RoomEntranceDoor : MonoBehaviour {
     public void OnPlayerEnter(GameObject interactor) {
         Debug.Log("Entering a room through a door");
 
+        interactor.transform.localPosition = transform.localPosition;
+        interactor.SetActive(true);
         room.Enable();
     }
 }
