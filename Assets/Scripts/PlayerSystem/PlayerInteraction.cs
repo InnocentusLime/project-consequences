@@ -18,7 +18,7 @@ public class PlayerInteraction : MonoBehaviour {
         int count = trigger.OverlapCollider(interactableFilter, results);
 
         for (int i = 0; i < count; ++i) {
-            results[i].gameObject.SendMessage("OnInteract", gameObject);
+            results[i].gameObject.GetComponent<Interactable>().interactionEvent.Invoke(gameObject);
         }
     }
 

@@ -26,11 +26,11 @@ public class ExitDoor : MonoBehaviour {
         }
     }
 
-    private void OnInteract(GameObject interactor) {
+    public void OnInteract(GameObject actor) {
         Debug.Log("Interacting with a door");
 
         room.Disable();
-        interactor.SetActive(false);
-        adjacentDoor.OnPlayerEnter(interactor);
+        actor.SetActive(false);
+        adjacentDoor.OnPlayerEnter(actor);
     }
 }
