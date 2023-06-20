@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FinishEntranceDoor : MonoBehaviour, IAdjacentDoor
+public class FinishEntranceDoor : MonoBehaviour
 {
     public void OnPlayerEnter(GameObject player) {
         Debug.Log("Location finish");

@@ -12,9 +12,11 @@ public class RoomTester : MonoBehaviour {
     public SceneAsset scene2;
 
     private bool roomsReady;
+    private FinishEntranceDoor finishEntranceDoor;
 
     // Start is called before the first frame update
     void Start() {
+        finishEntranceDoor = GetComponent<FinishEntranceDoor>();
         SceneManager.LoadScene(scene1.name, LoadSceneMode.Additive);
         SceneManager.LoadScene(scene2.name, LoadSceneMode.Additive);
     }
@@ -31,11 +33,11 @@ public class RoomTester : MonoBehaviour {
             }
 
             // Connect the rooms
-            room1.GetComponentInChildren<ExitDoor>().adjacentDoor = room2.GetComponentInChildren<RoomEntranceDoor>();
-            room2.GetComponentInChildren<ExitDoor>().adjacentDoor = GetComponent<FinishEntranceDoor>();
+            room1.exitDoor.playerLeaveEvent.AddListener(room2.entranceDoor.OnPlayerLeaveOldRoom);
+            room2.exitDoor.playerLeaveEvent.AddListener(finishEntranceDoor.OnPlayerEnter);
 
             // Start the first room
-            room1.GetComponentInChildren<RoomEntranceDoor>().OnPlayerEnter(player);
+            room1.entranceDoor.OnPlayerLeaveOldRoom(player);
 
             roomsReady = true;
         }

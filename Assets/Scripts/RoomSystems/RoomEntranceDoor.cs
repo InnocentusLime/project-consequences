@@ -1,30 +1,24 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
-public class RoomEntranceDoor : MonoBehaviour, IAdjacentDoor {
-    private Room room;
+[Serializable]
+public class PlayerEnterEvent : UnityEvent<GameObject> {}
+
+public class RoomEntranceDoor : MonoBehaviour {
+    public PlayerEnterEvent playerEnterEvent;
 
     private void Awake() {
-        GameObject parent = transform.parent.gameObject;
-
-        if (parent == null) {
-            Debug.LogError("Door has no parent");
-            return;
-        }
-
-        room = parent.GetComponent<Room>();
-
-        if (room == null) {
-            Debug.LogError("Door's parent isn't a room");
-        }
+        playerEnterEvent ??= new PlayerEnterEvent();
     }
 
-    public void OnPlayerEnter(GameObject interactor) {
+    public void OnPlayerLeaveOldRoom(GameObject actor) {
         Debug.Log("Entering a room through a door");
 
-        interactor.transform.localPosition = transform.localPosition;
-        interactor.SetActive(true);
-        room.Enable();
+        playerEnterEvent.Invoke(actor);
+        actor.transform.localPosition = transform.localPosition;
+        actor.SetActive(true);
     }
 }

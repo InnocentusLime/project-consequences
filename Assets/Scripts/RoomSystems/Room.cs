@@ -6,16 +6,27 @@ using UnityEngine.Assertions;
 using UnityEngine.SceneManagement;
 
 public class Room : MonoBehaviour {
-    private void Start() {
-        Disable();
+    public RoomExitDoor exitDoor;
+    public RoomEntranceDoor entranceDoor;
+
+    private void Awake() {
+        exitDoor = GetComponentInChildren<RoomExitDoor>();
+        entranceDoor = GetComponentInChildren<RoomEntranceDoor>();
+
+        entranceDoor.playerEnterEvent.AddListener(OnPlayerEnter);
+        exitDoor.playerLeaveEvent.AddListener(OnPlayerLeave);
     }
 
-    public void Enable() {
+    private void Start() {
+        gameObject.SetActive(false);
+    }
+
+    private void OnPlayerEnter(GameObject actor) {
         // Works well enough for now
         gameObject.SetActive(true);
     }
 
-    public void Disable() {
+    private void OnPlayerLeave(GameObject actor) {
         // Works well enough for now
         gameObject.SetActive(false);
     }
@@ -31,10 +42,6 @@ public class Room : MonoBehaviour {
         Assert.IsNotNull(root);
 
         Room room = root.GetComponent<Room>();
-        if (room == null) {
-            return null;
-        }
-
-        return room;
+        return room == null ? null : room;
     }
 }
