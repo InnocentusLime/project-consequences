@@ -272,8 +272,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   player: {fileID: 1884009667}
-  scene1: {fileID: 102900000, guid: 3be19cdf73c19a84e9374a1883d1d540, type: 3}
-  scene2: {fileID: 102900000, guid: d9feaa3c457e53146b8a839a554bdf3f, type: 3}
+  scenes:
+  - {fileID: 102900000, guid: 3be19cdf73c19a84e9374a1883d1d540, type: 3}
+  - {fileID: 102900000, guid: d9feaa3c457e53146b8a839a554bdf3f, type: 3}
 --- !u!4 &1792458424
 Transform:
   m_ObjectHideFlags: 0
