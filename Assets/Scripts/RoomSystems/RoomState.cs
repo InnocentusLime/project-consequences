@@ -11,20 +11,11 @@ public class SetMadnessLevel : UnityEvent<int> {}
 public class StartConsequenceTime : UnityEvent {}
 
 public class RoomState : MonoBehaviour {
-    [SerializeField] private int madnessLevel;
-    public SetMadnessLevel setMadnessLevelEvent;
+    public static SetMadnessLevel setMadnessLevelEvent;
+    public static StartConsequenceTime startConsequenceTimeEvent;
 
-    [SerializeField] private bool consequenceTime;
-    public StartConsequenceTime startConsequenceTimeEvent;
-
-    // Start is called before the first frame update
-    void Start() {
+    void Awake() {
         setMadnessLevelEvent ??= new SetMadnessLevel();
         startConsequenceTimeEvent ??= new StartConsequenceTime();
-    }
-
-    public void ResetState() {
-        madnessLevel = 0;
-        consequenceTime = false;
     }
 }
