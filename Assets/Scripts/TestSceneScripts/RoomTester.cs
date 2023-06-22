@@ -45,6 +45,7 @@ public class RoomTester : MonoBehaviour {
         }
 
         currentRoomScene = SceneManager.GetSceneByPath(path);
+        roomState.ResetState();
         RoomExitDoor exitDoor = FindFirstObjectByType<RoomExitDoor>();
         RoomEntranceDoor entranceDoor = FindFirstObjectByType<RoomEntranceDoor>();
         exitDoor.playerLeaveEvent.AddListener(OnRoomFinish);
