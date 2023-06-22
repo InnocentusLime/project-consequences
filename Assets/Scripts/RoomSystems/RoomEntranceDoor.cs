@@ -12,12 +12,10 @@ public class RoomEntranceDoor : MonoBehaviour {
 
     private void Awake() {
         playerEnterEvent ??= new PlayerEnterEvent();
+        playerEnterEvent.AddListener(OnPlayerEnter);
     }
 
-    public void OnPlayerLeaveOldRoom(GameObject actor) {
-        Debug.Log("Entering a room through a door");
-
-        playerEnterEvent.Invoke(actor);
+    private void OnPlayerEnter(GameObject actor) {
         actor.transform.localPosition = transform.localPosition;
         actor.SetActive(true);
     }

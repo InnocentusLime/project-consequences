@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -8,38 +10,57 @@ using UnityEngine.SceneManagement;
 public class RoomTester : MonoBehaviour {
     [Header("Scenes")]
     public GameObject player;
-    public SceneAsset scene1;
-    public SceneAsset scene2;
+    public SceneAsset[] scenes;
 
-    private bool roomsReady;
-    private FinishEntranceDoor finishEntranceDoor;
+    private RoomState roomState;
+    private int currentRoom;
 
-    // Start is called before the first frame update
-    void Start() {
-        finishEntranceDoor = GetComponent<FinishEntranceDoor>();
-        SceneManager.LoadScene(scene1.name, LoadSceneMode.Additive);
-        SceneManager.LoadScene(scene2.name, LoadSceneMode.Additive);
+    private Scene currentRoomScene;
+    private AsyncOperation nextRoomOp;
+    private string nextRoomPath;
+
+    private void Awake() {
+        roomState = GetComponent<RoomState>();
     }
 
-    // Update is called once per frame
-    void Update() {
-        // FIXME ugly. We need a better working loader for the final game anyway.
-        if (!roomsReady) {
-            Room room1 = Room.FindInScene(SceneManager.GetSceneAt(1));
-            Room room2 = Room.FindInScene(SceneManager.GetSceneAt(2));
+    private void Start() {
+        StartCoroutine(LoadRoom(scenes[0]));
+    }
 
-            if (room1 == null || room2 == null) {
-                return;
-            }
-
-            // Connect the rooms
-            room1.exitDoor.playerLeaveEvent.AddListener(room2.entranceDoor.OnPlayerLeaveOldRoom);
-            room2.exitDoor.playerLeaveEvent.AddListener(finishEntranceDoor.OnPlayerEnter);
-
-            // Start the first room
-            room1.entranceDoor.OnPlayerLeaveOldRoom(player);
-
-            roomsReady = true;
+    private void UnloadCurrentRoom() {
+        foreach (GameObject rootGameObject in currentRoomScene.GetRootGameObjects()) {
+            rootGameObject.SetActive(false);
+            Destroy(rootGameObject);
         }
+
+        SceneManager.UnloadSceneAsync(currentRoomScene);
+    }
+
+    private IEnumerator LoadRoom(SceneAsset room) {
+        string path = AssetDatabase.GetAssetPath(room);
+        AsyncOperation op = SceneManager.LoadSceneAsync(path, LoadSceneMode.Additive);
+
+        while (!op.isDone) {
+            yield return op;
+        }
+
+        currentRoomScene = SceneManager.GetSceneByPath(path);
+        RoomExitDoor exitDoor = FindFirstObjectByType<RoomExitDoor>();
+        RoomEntranceDoor entranceDoor = FindFirstObjectByType<RoomEntranceDoor>();
+        exitDoor.playerLeaveEvent.AddListener(OnRoomFinish);
+        entranceDoor.playerEnterEvent.Invoke(player);
+
+        yield return null;
+    }
+
+    private void OnRoomFinish(GameObject actor) {
+        UnloadCurrentRoom();
+
+        currentRoom += 1;
+        if (currentRoom == scenes.Length) {
+            return;
+        }
+
+        StartCoroutine(LoadRoom(scenes[currentRoom]));
     }
 }
