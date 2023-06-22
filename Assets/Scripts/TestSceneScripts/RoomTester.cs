@@ -12,52 +12,55 @@ public class RoomTester : MonoBehaviour {
     public GameObject player;
     public SceneAsset[] scenes;
 
-    private Room[] rooms;
+    private RoomState roomState;
     private int currentRoom;
-    private FinishEntranceDoor finishEntranceDoor;
+
+    private Scene currentRoomScene;
+    private AsyncOperation nextRoomOp;
+    private string nextRoomPath;
 
     private void Awake() {
-        finishEntranceDoor = GetComponent<FinishEntranceDoor>();
+        roomState = GetComponent<RoomState>();
     }
 
     private void Start() {
-        StartCoroutine(LoadScenesAsync());
+        StartCoroutine(LoadRoom(scenes[0]));
     }
 
-    private IEnumerator LoadScenesAsync() {
-        string[] paths = scenes
-            .Select(AssetDatabase.GetAssetPath)
-            .ToArray();
-        AsyncOperation[] sceneOperations = paths
-            .Select(path => SceneManager.LoadSceneAsync(path, LoadSceneMode.Additive))
-            .ToArray();
-
-        foreach (AsyncOperation sceneOperation in sceneOperations) {
-            while (!sceneOperation.isDone) {
-                yield return sceneOperation;
-            }
+    private void UnloadCurrentRoom() {
+        foreach (GameObject rootGameObject in currentRoomScene.GetRootGameObjects()) {
+            rootGameObject.SetActive(false);
+            Destroy(rootGameObject);
         }
 
-        rooms = paths.Select(SceneManager.GetSceneByPath)
-            .Select(scene => scene.GetRootGameObjects()[0])
-            .Select(obj => obj.GetComponent<Room>())
-            .ToArray();
+        SceneManager.UnloadSceneAsync(currentRoomScene);
+    }
 
-        // Room stitching
-        foreach (Room room in rooms.Take(rooms.Length - 1)) {
-            room.exitDoor.playerLeaveEvent.AddListener(OnRoomFinish);
+    private IEnumerator LoadRoom(SceneAsset room) {
+        string path = AssetDatabase.GetAssetPath(room);
+        AsyncOperation op = SceneManager.LoadSceneAsync(path, LoadSceneMode.Additive);
+
+        while (!op.isDone) {
+            yield return op;
         }
-        rooms.Last().exitDoor.playerLeaveEvent.AddListener(finishEntranceDoor.OnPlayerEnter);
 
-        // Start
-        rooms.First().entranceDoor.playerEnterEvent.Invoke(player);
+        currentRoomScene = SceneManager.GetSceneByPath(path);
+        RoomExitDoor exitDoor = FindFirstObjectByType<RoomExitDoor>();
+        RoomEntranceDoor entranceDoor = FindFirstObjectByType<RoomEntranceDoor>();
+        exitDoor.playerLeaveEvent.AddListener(OnRoomFinish);
+        entranceDoor.playerEnterEvent.Invoke(player);
 
         yield return null;
     }
 
     private void OnRoomFinish(GameObject actor) {
-        Debug.Log("Incrementing room");
+        UnloadCurrentRoom();
+
         currentRoom += 1;
-        rooms[currentRoom].entranceDoor.playerEnterEvent.Invoke(player);
+        if (currentRoom == scenes.Length) {
+            return;
+        }
+
+        StartCoroutine(LoadRoom(scenes[currentRoom]));
     }
 }
