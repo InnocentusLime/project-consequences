@@ -16,8 +16,6 @@ public class RoomEntranceDoor : MonoBehaviour {
     }
 
     private void OnPlayerEnter(GameObject actor) {
-        Debug.Log("Entering a room through a door");
-
         actor.transform.localPosition = transform.localPosition;
         actor.SetActive(true);
     }

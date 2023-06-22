@@ -56,6 +56,7 @@ public class RoomTester : MonoBehaviour {
     }
 
     private void OnRoomFinish(GameObject actor) {
+        Debug.Log("Incrementing room");
         currentRoom += 1;
         rooms[currentRoom].entranceDoor.playerEnterEvent.Invoke(player);
     }
