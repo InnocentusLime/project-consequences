@@ -366,11 +366,11 @@ GameObject:
   m_Component:
   - component: {fileID: 1756829970}
   - component: {fileID: 1756829974}
-  - component: {fileID: 1756829973}
   - component: {fileID: 1756829972}
+  - component: {fileID: 1756829975}
   - component: {fileID: 1756829971}
   m_Layer: 7
-  m_Name: 'Interactable '
+  m_Name: 'Key '
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -406,8 +406,8 @@ MonoBehaviour:
   interactionEvent:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1756829973}
-        m_TargetAssemblyTypeName: InteractionTester, Assembly-CSharp
+      - m_Target: {fileID: 1756829975}
+        m_TargetAssemblyTypeName: Key, Assembly-CSharp
         m_MethodName: OnInteraction
         m_Mode: 0
         m_Arguments:
@@ -444,18 +444,6 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
---- !u!114 &1756829973
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1756829969}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5a2642710e2343044859496fa46c6465, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!212 &1756829974
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -508,6 +496,18 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &1756829975
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1756829969}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 44d2fd0644b29db44993c3aae0002dc2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2085869426
 GameObject:
   m_ObjectHideFlags: 0
@@ -555,6 +555,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 163ab1cb062c6d644802e6a49b66d8d9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isLocked: 1
   playerLeaveEvent:
     m_PersistentCalls:
       m_Calls: []
