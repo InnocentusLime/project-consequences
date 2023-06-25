@@ -18,4 +18,14 @@ public class Bullet : MonoBehaviour
 
         Destroy(gameObject, lifeTime);
     }
+
+    private void OnCollisionEnter2D(Collision2D col) {
+        Hittable hittable = col.gameObject.GetComponent<Hittable>();
+
+        if (hittable != null) {
+            hittable.bulletHitEvent.Invoke(gameObject);
+        }
+
+        Destroy(gameObject);
+    }
 }
