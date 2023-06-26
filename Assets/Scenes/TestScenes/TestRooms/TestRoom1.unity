@@ -303,6 +303,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 163ab1cb062c6d644802e6a49b66d8d9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isLocked: 0
   playerLeaveEvent:
     m_PersistentCalls:
       m_Calls: []
