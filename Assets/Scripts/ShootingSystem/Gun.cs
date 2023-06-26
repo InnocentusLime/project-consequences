@@ -6,7 +6,7 @@ using UnityEngine.Assertions;
 public class Gun : MonoBehaviour {
     public bool hasGun = true;
     public float cooldownDuration = 0.8f;
-    public GameObject bulletPrefab;
+    public Bullet bulletPrefab;
 
     private bool isCoolingDown;
     private Camera mainCamera;
@@ -18,16 +18,21 @@ public class Gun : MonoBehaviour {
 
     private void Update() {
          if (Input.GetMouseButtonDown(0) && CanShoot()) {
-            isCoolingDown = true;
-            StartCoroutine(CooldownRoutine(cooldownDuration));
-
-            float shootingAngle = ShootingAngle();
-            Instantiate(
-                bulletPrefab,
-                transform.localPosition,
-                Quaternion.AngleAxis(shootingAngle, Vector3.forward)
-            );
+            Shoot();
          }
+    }
+
+    private void Shoot() {
+        isCoolingDown = true;
+        StartCoroutine(CooldownRoutine(cooldownDuration));
+
+        float shootingAngle = ShootingAngle();
+        Bullet bullet = Instantiate(
+            bulletPrefab,
+            transform.localPosition,
+            Quaternion.AngleAxis(shootingAngle, Vector3.forward)
+        );
+        bullet.creator = gameObject;
     }
 
     private bool CanShoot() => hasGun && !isCoolingDown;

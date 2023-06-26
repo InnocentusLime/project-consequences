@@ -6,6 +6,7 @@ using UnityEngine;
 public class Bullet : MonoBehaviour {
     public float moveSpeed;
     public float lifeTime;
+    public GameObject creator;
 
     private void Start() {
         Rigidbody2D rigidBody2D = GetComponent<Rigidbody2D>();
@@ -23,6 +24,8 @@ public class Bullet : MonoBehaviour {
             hittable.bulletHitEvent.Invoke(gameObject);
         }
 
-        Destroy(gameObject);
+        if (col.gameObject != creator) {
+            Destroy(gameObject);
+        }
     }
 }
