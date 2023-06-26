@@ -4,15 +4,15 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Key : MonoBehaviour {
-    private RoomExitDoor roomToUnlock;
+    private RoomExitDoor doorToUnlock;
 
     public void Awake() {
-        roomToUnlock = FindFirstObjectByType<RoomExitDoor>();
+        doorToUnlock = FindFirstObjectByType<RoomExitDoor>();
     }
 
     public void OnInteraction(GameObject actor) {
         gameObject.SetActive(false);
-        roomToUnlock.Unlock();
+        doorToUnlock.Unlock();
         RoomState.startConsequenceTimeEvent.Invoke();
     }
 }
