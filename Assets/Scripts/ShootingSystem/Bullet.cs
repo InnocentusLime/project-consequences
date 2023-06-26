@@ -3,13 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Bullet : MonoBehaviour
-{
+public class Bullet : MonoBehaviour {
     public float moveSpeed;
     public float lifeTime;
 
-    void Start()
-    {
+    private void Start() {
         Rigidbody2D rigidBody2D = GetComponent<Rigidbody2D>();
 
         float angle = (rigidBody2D.rotation + 90) * Mathf.Deg2Rad;

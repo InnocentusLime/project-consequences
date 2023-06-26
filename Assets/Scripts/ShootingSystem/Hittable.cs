@@ -5,8 +5,7 @@ using UnityEngine;
 using UnityEngine.Events;
 
 [Serializable]
-public class BulletHitEvent : UnityEvent<GameObject> {
-}
+public class BulletHitEvent : UnityEvent<GameObject> { }
 
 public class Hittable : MonoBehaviour {
     public BulletHitEvent bulletHitEvent;

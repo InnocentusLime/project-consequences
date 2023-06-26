@@ -4,35 +4,45 @@ using UnityEngine;
 using UnityEngine.Assertions;
 
 public class Gun : MonoBehaviour {
-    public bool allowedToShoot = true;
-    private bool isCoolDowned;
-    public float coolDownDuration = 0.8f;
-    public GameObject bullet;
-    private Camera cam;
+    public bool hasGun = true;
+    public float cooldownDuration = 0.8f;
+    public GameObject bulletPrefab;
 
-    // Start is called before the first frame update
-    private void Start()
-    {
-        cam = Camera.main;
-        Assert.IsNotNull(cam);
+    private bool isCoolingDown;
+    private Camera mainCamera;
+
+    private void Start() {
+        mainCamera = Camera.main;
+        Assert.IsNotNull(mainCamera);
     }
 
-    // Update is called once per frame
     private void Update() {
-        if (!Input.GetMouseButtonDown(0) || !allowedToShoot || isCoolDowned) {
-            return;
-        }
+         if (Input.GetMouseButtonDown(0) && CanShoot()) {
+            isCoolingDown = true;
+            StartCoroutine(CooldownRoutine(cooldownDuration));
 
-        Vector2 mouse = cam.ScreenToWorldPoint(Input.mousePosition);
-        Vector2 player = transform.localPosition;
-        float angle = Vector2.SignedAngle(Vector2.up, mouse - player);
-        Instantiate(bullet, player, Quaternion.AngleAxis(angle, Vector3.forward));
-        isCoolDowned = true;
-        StartCoroutine(CoolDownRoutine(coolDownDuration));
+            float shootingAngle = ShootingAngle();
+            Instantiate(
+                bulletPrefab,
+                transform.localPosition,
+                Quaternion.AngleAxis(shootingAngle, Vector3.forward)
+            );
+         }
     }
 
-    private IEnumerator CoolDownRoutine(float duration) {
+    private bool CanShoot() => hasGun && !isCoolingDown;
+
+    private float ShootingAngle() {
+        Vector2 mousePosition = mainCamera.ScreenToWorldPoint(Input.mousePosition);
+
+        return Vector2.SignedAngle(
+            Vector2.up,
+            mousePosition - (Vector2)transform.localPosition
+            );
+    }
+
+    private IEnumerator CooldownRoutine(float duration) {
         yield return new WaitForSeconds(duration);
-        isCoolDowned = false;
+        isCoolingDown = false;
     }
 }
