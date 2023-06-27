@@ -26,6 +26,7 @@ public class RoomTester : MonoBehaviour {
             Destroy(rootGameObject);
         }
 
+        GlobalRoomState.ResetState();
         SceneManager.UnloadSceneAsync(currentRoomScene);
     }
 
@@ -38,9 +39,8 @@ public class RoomTester : MonoBehaviour {
 
         currentRoomScene = SceneManager.GetSceneByPath(path);
 
-        Room roomObj = FindFirstObjectByType<Room>();
-        roomObj.playerLeaveEvent.AddListener(OnRoomFinish);
-        roomObj.playerEnterEvent.Invoke(playerPrefab);
+        GlobalRoomState.playerLeaveEvent.AddListener(OnRoomFinish);
+        GlobalRoomState.playerEnterEvent.Invoke(playerPrefab);
 
         yield return null;
     }

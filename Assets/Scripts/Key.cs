@@ -13,6 +13,6 @@ public class Key : MonoBehaviour {
     public void OnInteraction(GameObject actor) {
         Destroy(gameObject);
         doorToUnlock.Unlock();
-        Room.currentRoom.startConsequenceTimeEvent.Invoke();
+        GlobalRoomState.startConsequenceTimeEvent.Invoke();
     }
 }

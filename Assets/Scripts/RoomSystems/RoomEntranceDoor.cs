@@ -5,7 +5,11 @@ using UnityEngine;
 using UnityEngine.Events;
 
 public class RoomEntranceDoor : MonoBehaviour {
-    public void OnPlayerEnter(GameObject playerPrefab) {
-        Room.currentRoom.player = Instantiate(playerPrefab, transform.localPosition, Quaternion.identity);
+    public void Awake() {
+        GlobalRoomState.playerEnterEvent.AddListener(OnPlayerEnter);
+    }
+
+    private void OnPlayerEnter(GameObject playerPrefab) {
+        GlobalRoomState.player = Instantiate(playerPrefab, transform.localPosition, Quaternion.identity);
     }
 }

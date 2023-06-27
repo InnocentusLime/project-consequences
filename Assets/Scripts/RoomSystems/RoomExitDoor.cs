@@ -21,7 +21,7 @@ public class RoomExitDoor : MonoBehaviour {
         }
 
         Destroy(actor);
-        Room.currentRoom.playerLeaveEvent.Invoke();
+        GlobalRoomState.playerLeaveEvent.Invoke();
     }
 
     public void Unlock() {
