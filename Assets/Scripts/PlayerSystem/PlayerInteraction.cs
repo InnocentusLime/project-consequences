@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.Serialization;
 
 public class PlayerInteraction : MonoBehaviour {
-    [FormerlySerializedAs("trigger")] [SerializeField] private Collider2D interactionZone;
+    [SerializeField] private Collider2D interactionZone;
 
     private readonly Collider2D[] collisionBuffer = new Collider2D[3];
     private ContactFilter2D interactableLayerFilter;
