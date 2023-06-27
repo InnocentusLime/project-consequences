@@ -29,13 +29,13 @@ public class GlobalRoomState : MonoBehaviour {
 
     public static void ResetState() {
         player = null;
-        setMadnessLevelEvent = new SetMadnessLevel();
-        startConsequenceTimeEvent = new StartConsequenceTime();
-        playerEnterEvent = new PlayerEnterEvent();
-        playerLeaveEvent = new PlayerLeaveEvent();
     }
 
     private void Awake() {
         ResetState();
+        setMadnessLevelEvent ??= new SetMadnessLevel();
+        startConsequenceTimeEvent ??= new StartConsequenceTime();
+        playerEnterEvent ??= new PlayerEnterEvent();
+        playerLeaveEvent ??= new PlayerLeaveEvent();
     }
 }
