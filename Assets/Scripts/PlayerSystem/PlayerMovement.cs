@@ -30,12 +30,12 @@ public class PlayerMovement : MonoBehaviour {
     }
 
     // Use this for initialization
-    void Start() {
+    private void Start() {
         direction = Vector2.right;
     }
 
     // Update is called once per frame
-    void Update() {
+    private void Update() {
         isRightPressed = Input.GetKey(KeyCode.D);
         isLeftPressed = Input.GetKey(KeyCode.A);
         wasJumpPressed = Input.GetKeyDown(KeyCode.Space);

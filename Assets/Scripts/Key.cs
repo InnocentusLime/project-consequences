@@ -6,7 +6,7 @@ using UnityEngine;
 public class Key : MonoBehaviour {
     private RoomExitDoor doorToUnlock;
 
-    public void Awake() {
+    private void Awake() {
         doorToUnlock = FindFirstObjectByType<RoomExitDoor>();
     }
 

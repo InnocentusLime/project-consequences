@@ -8,7 +8,7 @@ using UnityEngine.Serialization;
 public class RoomExitDoor : MonoBehaviour {
     [SerializeField] private bool isLocked = true;
 
-    private void Start() {
+    private void Awake() {
         // NOTE remove ASAP. This for a more testable prototype
         SpriteRenderer spr = GetComponent<SpriteRenderer>();
         spr.color = isLocked ? new Color(0.0f, 0.3f, 0.0f) : new Color(0.0f, 1.0f, 0.0f);

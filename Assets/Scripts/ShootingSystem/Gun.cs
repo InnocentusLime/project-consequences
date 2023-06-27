@@ -11,7 +11,7 @@ public class Gun : MonoBehaviour {
     private bool isCoolingDown;
     private Camera mainCamera;
 
-    private void Start() {
+    private void Awake() {
         mainCamera = Camera.main;
         Assert.IsNotNull(mainCamera);
     }

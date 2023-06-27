@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.Events;
 
 public class RoomEntranceDoor : MonoBehaviour {
-    public void Awake() {
+    private void Awake() {
         GlobalRoomState.playerEnterEvent.AddListener(OnPlayerEnter);
     }
 
