@@ -6,13 +6,13 @@ using UnityEngine.Events;
 using UnityEngine.Serialization;
 
 [Serializable]
-public class InteractEvent : UnityEvent<GameObject> {
+public class InteractionEvent : UnityEvent<GameObject> {
 }
 
 public class Interactable : MonoBehaviour {
     public UnityEvent<GameObject> interactionEvent;
 
     private void Awake() {
-        interactionEvent ??= new InteractEvent();
+        interactionEvent ??= new InteractionEvent();
     }
 }
