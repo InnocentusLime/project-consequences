@@ -5,7 +5,8 @@ using UnityEngine;
 using UnityEngine.Events;
 
 [Serializable]
-public class PlayerEnterEvent : UnityEvent<GameObject> {}
+public class PlayerEnterEvent : UnityEvent<GameObject> {
+}
 
 public class RoomEntranceDoor : MonoBehaviour {
     public PlayerEnterEvent playerEnterEvent;

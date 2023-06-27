@@ -17,9 +17,9 @@ public class Gun : MonoBehaviour {
     }
 
     private void Update() {
-         if (Input.GetMouseButtonDown(0) && CanShoot()) {
+        if (Input.GetMouseButtonDown(0) && CanShoot()) {
             Shoot();
-         }
+        }
     }
 
     private void Shoot() {
@@ -27,11 +27,8 @@ public class Gun : MonoBehaviour {
         StartCoroutine(CooldownRoutine(cooldownDuration));
 
         float shootingAngle = ShootingAngle();
-        Bullet bullet = Instantiate(
-            bulletPrefab,
-            transform.localPosition,
-            Quaternion.AngleAxis(shootingAngle, Vector3.forward)
-        );
+        Bullet bullet = Instantiate(bulletPrefab, transform.localPosition,
+            Quaternion.AngleAxis(shootingAngle, Vector3.forward));
         bullet.creator = gameObject;
     }
 
@@ -40,10 +37,7 @@ public class Gun : MonoBehaviour {
     private float ShootingAngle() {
         Vector2 mousePosition = mainCamera.ScreenToWorldPoint(Input.mousePosition);
 
-        return Vector2.SignedAngle(
-            Vector2.up,
-            mousePosition - (Vector2)transform.localPosition
-            );
+        return Vector2.SignedAngle(Vector2.up, mousePosition - (Vector2) transform.localPosition);
     }
 
     private IEnumerator CooldownRoutine(float duration) {

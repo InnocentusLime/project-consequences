@@ -6,7 +6,8 @@ using UnityEngine.Events;
 using UnityEngine.Serialization;
 
 [Serializable]
-public class InteractEvent : UnityEvent<GameObject> { }
+public class InteractEvent : UnityEvent<GameObject> {
+}
 
 public class Interactable : MonoBehaviour {
     public UnityEvent<GameObject> interactionEvent;

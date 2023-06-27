@@ -8,11 +8,10 @@ using UnityEngine.Assertions;
 using UnityEngine.SceneManagement;
 
 public class RoomTester : MonoBehaviour {
-    [Header("Scenes")]
-    public GameObject player;
+    [Header("Scenes")] public GameObject player;
     public SceneAsset[] scenes;
 
-    private RoomState roomState;
+    private Room room;
     private int currentRoom;
 
     private Scene currentRoomScene;
@@ -20,7 +19,7 @@ public class RoomTester : MonoBehaviour {
     private string nextRoomPath;
 
     private void Awake() {
-        roomState = GetComponent<RoomState>();
+        room = GetComponent<Room>();
     }
 
     private void Start() {

@@ -2,7 +2,7 @@
 using UnityEngine;
 
 public abstract class DebugTool : MonoBehaviour {
-    public abstract string Name { get; }
+    public abstract string toolName { get; }
 
     public abstract void ShowUi();
 }
@@ -16,7 +16,7 @@ public class DebugToolset : MonoBehaviour {
     private void Awake() {
         // Singleton invariant
         if (instance != null) {
-            Destroy(this.gameObject);
+            Destroy(gameObject);
             return;
         }
 
@@ -25,7 +25,7 @@ public class DebugToolset : MonoBehaviour {
 
         // Actual initialization
         debugTools = GetComponents<DebugTool>();
-        debugToolsNames = debugTools.Select(x => x.Name).ToArray();
+        debugToolsNames = debugTools.Select(x => x.toolName).ToArray();
     }
 
     private void OnGUI() {

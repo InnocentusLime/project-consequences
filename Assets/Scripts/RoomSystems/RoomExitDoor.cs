@@ -6,7 +6,8 @@ using UnityEngine.Events;
 using UnityEngine.Serialization;
 
 [Serializable]
-public class PlayerLeaveEvent : UnityEvent<GameObject> {}
+public class PlayerLeaveEvent : UnityEvent<GameObject> {
+}
 
 public class RoomExitDoor : MonoBehaviour {
     [SerializeField] private bool isLocked = true;

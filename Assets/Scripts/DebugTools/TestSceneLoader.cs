@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class TestSceneLoader : DebugTool {
-    public override string Name => "TestSceneLoader";
+    public override string toolName => "TestSceneLoader";
 
     private bool show;
     private Vector2 scrollPosition;
