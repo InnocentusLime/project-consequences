@@ -18,14 +18,18 @@ public class Bullet : MonoBehaviour {
     }
 
     private void OnCollisionEnter2D(Collision2D col) {
-        Hittable hittable = col.gameObject.GetComponent<Hittable>();
+        GameObject colGameObject = col.gameObject;
+
+        if (colGameObject == creator) {
+            return;
+        }
+
+        Hittable hittable = colGameObject.GetComponent<Hittable>();
 
         if (hittable != null) {
             hittable.bulletHitEvent.Invoke(gameObject);
         }
 
-        if (col.gameObject != creator) {
-            Destroy(gameObject);
-        }
+        Destroy(gameObject);
     }
 }
