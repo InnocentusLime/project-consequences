@@ -1,30 +1,36 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class PlayerInteraction : MonoBehaviour {
-    [SerializeField] private Collider2D trigger;
-    private Collider2D[] results = new Collider2D[3];
-    private ContactFilter2D interactableFilter;
+    [FormerlySerializedAs("trigger")] [SerializeField] private Collider2D interactionZone;
+
+    private readonly Collider2D[] collisionBuffer = new Collider2D[3];
+    private ContactFilter2D interactableLayerFilter;
 
     private void Awake() {
-        interactableFilter.layerMask = LayerMask.GetMask("Interaction");
-        interactableFilter.useLayerMask = true;
-        interactableFilter.useTriggers = true;
+        interactableLayerFilter.layerMask = LayerMask.GetMask("Interaction");
+        interactableLayerFilter.useLayerMask = true;
+        interactableLayerFilter.useTriggers = true;
     }
 
-    private void TryInteract() {
-        int count = trigger.OverlapCollider(interactableFilter, results);
+    private void InteractAround() {
+        int count = interactionZone.OverlapCollider(interactableLayerFilter, collisionBuffer);
 
-        for (int i = 0; i < count; ++i) {
-            results[i].gameObject.GetComponent<Interactable>().interactionEvent.Invoke(gameObject);
+        IEnumerable<Interactable> touchedIntractable = collisionBuffer.Take(count)
+            .Select(x => x.gameObject.GetComponent<Interactable>());
+
+        foreach (Interactable interactable in touchedIntractable) {
+            interactable.interactionEvent.Invoke(gameObject);
         }
     }
 
     private void Update() {
         if (Input.GetKeyDown(KeyCode.E)) {
-            TryInteract();
+            InteractAround();
         }
     }
 }
