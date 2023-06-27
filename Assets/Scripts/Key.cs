@@ -11,7 +11,7 @@ public class Key : MonoBehaviour {
     }
 
     public void OnInteraction(GameObject actor) {
-        gameObject.SetActive(false);
+        Destroy(gameObject);
         doorToUnlock.Unlock();
         RoomState.startConsequenceTimeEvent.Invoke();
     }
