@@ -5,17 +5,8 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Serialization;
 
-[Serializable]
-public class PlayerLeaveEvent : UnityEvent<GameObject> {
-}
-
 public class RoomExitDoor : MonoBehaviour {
     [SerializeField] private bool isLocked = true;
-    public PlayerLeaveEvent playerLeaveEvent;
-
-    private void Awake() {
-        playerLeaveEvent ??= new PlayerLeaveEvent();
-    }
 
     private void Start() {
         // NOTE remove ASAP. This for a more testable prototype
@@ -29,8 +20,8 @@ public class RoomExitDoor : MonoBehaviour {
             return;
         }
 
-        actor.SetActive(false);
-        playerLeaveEvent.Invoke(actor);
+        Destroy(actor);
+        Room.currentRoom.playerLeaveEvent.Invoke();
     }
 
     public void Unlock() {

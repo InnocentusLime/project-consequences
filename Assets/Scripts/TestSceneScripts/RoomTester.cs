@@ -8,22 +8,16 @@ using UnityEngine.Assertions;
 using UnityEngine.SceneManagement;
 
 public class RoomTester : MonoBehaviour {
-    [Header("Scenes")] public GameObject player;
+    public GameObject playerPrefab;
     public SceneAsset[] scenes;
 
-    private Room room;
-    private int currentRoom;
-
+    private int currentRoomId;
     private Scene currentRoomScene;
     private AsyncOperation nextRoomOp;
     private string nextRoomPath;
 
-    private void Awake() {
-        room = GetComponent<Room>();
-    }
-
     private void Start() {
-        StartCoroutine(LoadRoom(scenes[0]));
+        StartCoroutine(LoadRoom(AssetDatabase.GetAssetPath(scenes[0])));
     }
 
     private void UnloadCurrentRoom() {
@@ -35,8 +29,7 @@ public class RoomTester : MonoBehaviour {
         SceneManager.UnloadSceneAsync(currentRoomScene);
     }
 
-    private IEnumerator LoadRoom(SceneAsset room) {
-        string path = AssetDatabase.GetAssetPath(room);
+    private IEnumerator LoadRoom(string path) {
         AsyncOperation op = SceneManager.LoadSceneAsync(path, LoadSceneMode.Additive);
 
         while (!op.isDone) {
@@ -44,22 +37,24 @@ public class RoomTester : MonoBehaviour {
         }
 
         currentRoomScene = SceneManager.GetSceneByPath(path);
-        RoomExitDoor exitDoor = FindFirstObjectByType<RoomExitDoor>();
-        RoomEntranceDoor entranceDoor = FindFirstObjectByType<RoomEntranceDoor>();
-        exitDoor.playerLeaveEvent.AddListener(OnRoomFinish);
-        entranceDoor.playerEnterEvent.Invoke(player);
+
+        Room roomObj = FindFirstObjectByType<Room>();
+        roomObj.playerLeaveEvent.AddListener(OnRoomFinish);
+        roomObj.playerEnterEvent.Invoke(playerPrefab);
 
         yield return null;
     }
 
-    private void OnRoomFinish(GameObject actor) {
+    private void OnRoomFinish() {
         UnloadCurrentRoom();
 
-        currentRoom += 1;
-        if (currentRoom == scenes.Length) {
+        currentRoomId += 1;
+        if (currentRoomId == scenes.Length) {
             return;
         }
 
-        StartCoroutine(LoadRoom(scenes[currentRoom]));
+        StartCoroutine(LoadRoom(
+            AssetDatabase.GetAssetPath(scenes[currentRoomId])
+            ));
     }
 }
