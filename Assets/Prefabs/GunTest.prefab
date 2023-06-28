@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6629657264651731210}
   - component: {fileID: 7217447849963172995}
+  - component: {fileID: 5428848697876739591}
   m_Layer: 0
   m_Name: GunTest
   m_TagString: Untagged
@@ -25,7 +26,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4958536933785031798}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.1251, y: 1.4585, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.8897, y: 2.0475442, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -84,3 +85,18 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &5428848697876739591
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4958536933785031798}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1de30baebf323f44f9f74e47e1edf292, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  moveSpeed: 0
+  lifeTime: 999999
+  creator: {fileID: 0}

@@ -88,7 +88,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6626832515212413918}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -2.03, y: 3.13, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -234,9 +234,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8584c2c4d28d7fdbb9738fbc92f39cef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isPlayerControlled: 1
   hasGun: 1
   cooldownDuration: 0.8
   bulletPrefab: {fileID: 7743019789705946960, guid: 9d75a7b26f543284b80fdab13f5d9fb9, type: 3}
+  playerShootEvent:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &6626832515212413857
 MonoBehaviour:
   m_ObjectHideFlags: 0
