@@ -17,20 +17,19 @@ public class PlayerInteraction : MonoBehaviour {
         interactableLayerFilter.useTriggers = true;
     }
 
-    private void InteractAround() {
+    // ReSharper disable Unity.PerformanceAnalysis
+    private IEnumerable<Interactable> GetTouchedInteractable() {
         int count = interactionZone.OverlapCollider(interactableLayerFilter, collisionBuffer);
 
-        IEnumerable<Interactable> touchedIntractable = collisionBuffer.Take(count)
+        return collisionBuffer.Take(count)
             .Select(x => x.gameObject.GetComponent<Interactable>());
-
-        foreach (Interactable interactable in touchedIntractable) {
-            interactable.interactionEvent.Invoke(gameObject);
-        }
     }
 
     private void Update() {
         if (Input.GetKeyDown(KeyCode.E)) {
-            InteractAround();
+            foreach (Interactable interactable in GetTouchedInteractable()) {
+                interactable.interactionEvent.Invoke(gameObject);
+            }
         }
     }
 }
