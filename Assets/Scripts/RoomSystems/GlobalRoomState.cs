@@ -22,10 +22,10 @@ public class PlayerEnterEvent : UnityEvent<GameObject> {
 
 public class GlobalRoomState : MonoBehaviour {
     public static GameObject player;
-    public static SetMadnessLevel setMadnessLevelEvent;
-    public static StartConsequenceTime startConsequenceTimeEvent;
-    public static PlayerLeaveEvent playerLeaveEvent;
-    public static PlayerEnterEvent playerEnterEvent;
+    public static SetMadnessLevel setMadnessLevelEvent = new();
+    public static StartConsequenceTime startConsequenceTimeEvent = new();
+    public static PlayerLeaveEvent playerLeaveEvent = new();
+    public static PlayerEnterEvent playerEnterEvent = new();
 
     public static void ResetState() {
         player = null;
