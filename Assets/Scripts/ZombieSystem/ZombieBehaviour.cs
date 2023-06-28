@@ -40,7 +40,7 @@ public class ZombieBehaviour : CursedBehaviour {
             new Vector3(transform.localScale.x / 2 * Mathf.Sign(moveSpeed) + 0.05f, 0, 0),
             new Vector2(rigidBody2D.velocity.x, 0),
             distance: seeDistance,
-            layerMask: LayerMask.GetMask("Entities"));
+            layerMask: LayerMask.GetMask("Entities") | LayerMask.GetMask("Ground"));
 
         if (hitGround.collider != null) {
             moveSpeed = -moveSpeed;
