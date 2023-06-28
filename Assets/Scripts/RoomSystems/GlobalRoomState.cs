@@ -32,7 +32,7 @@ public class GlobalRoomState : MonoBehaviour {
     }
 
     private void Awake() {
-        ResetState();
+        //ResetState();
         setMadnessLevelEvent ??= new SetMadnessLevel();
         startConsequenceTimeEvent ??= new StartConsequenceTime();
         playerEnterEvent ??= new PlayerEnterEvent();
