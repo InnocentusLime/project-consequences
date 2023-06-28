@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.Assertions;
 
 public class Gun : MonoBehaviour {
+    public bool isPlayerControlled = true;
     public bool hasGun = true;
     public float cooldownDuration = 0.8f;
     public Bullet bulletPrefab;
@@ -17,12 +18,13 @@ public class Gun : MonoBehaviour {
     }
 
     private void Update() {
-        if (Input.GetMouseButtonDown(0) && CanShoot()) {
+        // FIXME super-duper ugly botch
+        if (Input.GetMouseButtonDown(0) && CanShoot() && isPlayerControlled) {
             Shoot();
         }
     }
 
-    private void Shoot() {
+    public void Shoot() {
         isCoolingDown = true;
         StartCoroutine(CooldownRoutine(cooldownDuration));
 
