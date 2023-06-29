@@ -4,8 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public abstract class CursedBehaviour : MonoBehaviour {
-    // TODO make it "Awake" bakck again
-    private void Start() {
+    private void Awake() {
         GlobalRoomState.startConsequenceTimeEvent.AddListener(OnConsequenceTime);
         GlobalRoomState.setMadnessLevelEvent.AddListener(OnMadnessChange);
 
