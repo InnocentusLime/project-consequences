@@ -14,6 +14,6 @@ public class RoomEntranceDoor : MonoBehaviour {
     }
 
     private void OnPlayerEnter(GameObject playerPrefab) {
-        GlobalRoomState.player = Instantiate(playerPrefab, transform.localPosition, Quaternion.identity);
+        GlobalRoomState.player = Instantiate(playerPrefab, transform.position, Quaternion.identity);
     }
 }
