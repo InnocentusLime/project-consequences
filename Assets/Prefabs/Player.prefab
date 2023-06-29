@@ -165,9 +165,9 @@ MonoBehaviour:
   isRightPressed: 0
   isLeftPressed: 0
   wasJumpPressed: 0
-  moveSpeed: 8
+  moveSpeed: 7
   gravity: 8
-  startJumpSpeed: 8
+  startJumpSpeed: 6.5
   groundMask:
     serializedVersion: 2
     m_Bits: 64
