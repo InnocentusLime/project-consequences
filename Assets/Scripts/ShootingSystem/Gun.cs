@@ -20,7 +20,7 @@ public class Gun : MonoBehaviour {
     public bool hasGun = true;
     public float cooldownDuration = 0.8f;
     public Bullet bulletPrefab;
-    [SerializeField] private PlayerShootEvent playerShootEvent;
+    public PlayerShootEvent playerShootEvent;
 
     private bool isCoolingDown;
     private Camera mainCamera;

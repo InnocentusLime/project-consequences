@@ -40,7 +40,11 @@ public class RoomTester : MonoBehaviour {
         currentRoomScene = SceneManager.GetSceneByPath(path);
 
         GlobalRoomState.playerLeaveEvent.AddListener(OnRoomFinish);
+        // TODO somehow learn to get the spawned player. (Or go back to the plan with a persistent player obj)
         GlobalRoomState.playerEnterEvent.Invoke(playerPrefab);
+        GlobalRoomState.player.GetComponent<Gun>().playerShootEvent.AddListener(
+            GetComponent<ShadowDirector>().OnPlayerShoot
+            );
 
         yield return null;
     }

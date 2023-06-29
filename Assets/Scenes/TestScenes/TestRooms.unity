@@ -252,6 +252,7 @@ GameObject:
   - component: {fileID: 1792458424}
   - component: {fileID: 1792458423}
   - component: {fileID: 1792458425}
+  - component: {fileID: 1792458426}
   m_Layer: 0
   m_Name: Room Loader
   m_TagString: Untagged
@@ -302,3 +303,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b10050af517db244aa55db7ea84a8948, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1792458426
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1792458422}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c8dd8786cbb650a468b982192c4564ec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shadowPrefab: {fileID: 8246311911640180350, guid: c9565aaab078fdc46a8f2698c8f107e8, type: 3}
