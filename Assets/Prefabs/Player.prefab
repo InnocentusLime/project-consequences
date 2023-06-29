@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6626832513871972896}
   - component: {fileID: 6626832513871972897}
-  m_Layer: 9
+  m_Layer: 7
   m_Name: InteractCollider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -75,7 +75,7 @@ GameObject:
   - component: {fileID: 5152680661165303237}
   - component: {fileID: 3447528173359765449}
   - component: {fileID: 6626832515212413857}
-  m_Layer: 9
+  m_Layer: 10
   m_Name: Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -162,21 +162,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b31b3b02a07ad14d82fe91b50cf4420, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isRightPressed: 0
-  isLeftPressed: 0
-  wasJumpPressed: 0
-  moveSpeed: 7
-  gravity: 8
-  startJumpSpeed: 6.5
-  groundMask:
-    serializedVersion: 2
-    m_Bits: 64
-  hitBox: {fileID: 0}
-  mainSprite: {fileID: 0}
-  onGround: 0
-  velocity: {x: 0, y: 0}
-  rBody2d: {fileID: 0}
-  playerSpawnPoint: {fileID: 0}
+  playerSpeed: 5
+  jumpPower: 7
 --- !u!61 &6626832515212413859
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -211,7 +198,7 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6626832515212413918}
-  m_BodyType: 1
+  m_BodyType: 0
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0

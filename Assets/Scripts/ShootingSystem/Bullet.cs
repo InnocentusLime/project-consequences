@@ -17,10 +17,16 @@ public class Bullet : MonoBehaviour {
         Destroy(gameObject, lifeTime);
     }
 
-    private void OnCollisionEnter2D(Collision2D col) {
+    // TODO make it a "onCollisionEnter2D" one day?
+    private void OnTriggerEnter2D(Collider2D col) {
         GameObject colGameObject = col.gameObject;
 
-        if (colGameObject == creator) {
+        // Another ugly bodge!!!
+        LayerMask objectLayer = 1 << colGameObject.layer;
+        LayerMask mask = LayerMask.GetMask("Entities") |
+                         LayerMask.GetMask("Ground")|
+                         LayerMask.GetMask("Player");
+        if (colGameObject == creator || (mask & objectLayer) == 0) {
             return;
         }
 
