@@ -9,13 +9,11 @@ public class Shadow : CursedBehaviour {
     public float scanRange = 5.0f;
 
     private Gun gun;
-    private ContactFilter2D filter;
-    private readonly RaycastHit2D[] seenObjects = new RaycastHit2D[3];
+    int layerMask;
 
     protected override void ExtraAwake() {
         gun = GetComponent<Gun>();
-        filter.useLayerMask = true;
-        filter.layerMask = LayerMask.GetMask("Entities");
+        layerMask = LayerMask.GetMask("Entities") | LayerMask.GetMask("Ground");
     }
 
     private void Update() {
@@ -25,7 +23,7 @@ public class Shadow : CursedBehaviour {
         for (float angDelta = -scanRange; angDelta <= scanRange; angDelta += 1f) {
             float angle = shootAngle + angDelta;
 
-            int count = Physics2D.BoxCast(
+            GameObject seenObject = Physics2D.BoxCast(
                 transform.localPosition,
                 bulletSize * 0.45f,
                 angle,
@@ -33,18 +31,19 @@ public class Shadow : CursedBehaviour {
                     Mathf.Cos((shootAngle + 90) * Mathf.Deg2Rad),
                     Mathf.Sin((shootAngle + 90) * Mathf.Deg2Rad)
                 ),
-                filter,
-                seenObjects,
-                visionLength
-            );
+                visionLength,
+                layerMask
+            ).rigidbody.gameObject;
 
-            for (int i = 0; i < count; ++i) {
-                GameObject seenObject = seenObjects[i].rigidbody.gameObject;
+            if (seenObject == GlobalRoomState.player) {
+                gun.Shoot(angle);
+                Destroy(gameObject);
 
-                if (seenObject == GlobalRoomState.player) {
-                    gun.Shoot(angle);
-                    Destroy(gameObject);
-                }
+                // I have accidentally made the shadow shoot several bullets at once
+                // On second thought, maybe we should consider giving it a shotgun...
+                // And then give the shotgun to the player in the very end so they can
+                // DESTROY everyone.
+                break;
             }
         }
     }
