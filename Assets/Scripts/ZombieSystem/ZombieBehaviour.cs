@@ -81,6 +81,7 @@ public class ZombieBehaviour : CursedBehaviour {
         }
 
         isDead = false;
+        moveSpeed *= angryMul;
         GetComponent<SpriteRenderer>().color = new Color(0f, 147.0f / 255, 27.0f / 255);
     }
 
