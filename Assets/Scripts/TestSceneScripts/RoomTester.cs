@@ -18,6 +18,7 @@ public class RoomTester : MonoBehaviour {
 
     private void Start() {
         StartCoroutine(LoadRoom(AssetDatabase.GetAssetPath(scenes[0])));
+        GlobalRoomState.playerLeaveEvent.AddListener(OnRoomFinish);
     }
 
     private void UnloadCurrentRoom() {
@@ -39,7 +40,6 @@ public class RoomTester : MonoBehaviour {
 
         currentRoomScene = SceneManager.GetSceneByPath(path);
 
-        GlobalRoomState.playerLeaveEvent.AddListener(OnRoomFinish);
         // TODO somehow learn to get the spawned player. (Or go back to the plan with a persistent player obj)
         GlobalRoomState.playerEnterEvent.Invoke(playerPrefab);
         GlobalRoomState.player.GetComponent<Gun>().playerShootEvent.AddListener(
@@ -60,5 +60,28 @@ public class RoomTester : MonoBehaviour {
         StartCoroutine(LoadRoom(
             AssetDatabase.GetAssetPath(scenes[currentRoomId])
             ));
+    }
+
+    private void ResetRoom() {
+        UnloadCurrentRoom();
+
+        PlayerState player = FindObjectOfType<PlayerState>();
+        if (player != null) {
+            Destroy(player.gameObject);
+        }
+
+        foreach (Shadow shadow in GetComponentsInChildren<Shadow>()) {
+            Destroy(shadow.gameObject);
+        }
+
+        StartCoroutine(LoadRoom(
+            AssetDatabase.GetAssetPath(scenes[currentRoomId])
+        ));
+    }
+
+    private void Update() {
+        if (Input.GetKeyDown(KeyCode.R)) {
+            ResetRoom();
+        }
     }
 }
