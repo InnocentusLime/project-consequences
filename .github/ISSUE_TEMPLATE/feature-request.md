@@ -8,7 +8,7 @@ assignees: ''
 ---
 
 # Problem
-Of this proposal is trying to solve a problem -- tell us. If it doesn't solve anything -- erase this section.
+If this proposal is trying to solve a problem -- tell us. If it doesn't solve anything -- erase this section.
 
 # Solution
 Clear and concise description of the solution.

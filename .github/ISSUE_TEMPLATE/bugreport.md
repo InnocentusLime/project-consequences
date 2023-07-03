@@ -10,7 +10,7 @@ assignees: ''
 # Game version
 Build link and/or commit hash.
 
-# Описание бага
+# Bug description
 Clear and concise description of the bug.
 
 # Reproduction steps
