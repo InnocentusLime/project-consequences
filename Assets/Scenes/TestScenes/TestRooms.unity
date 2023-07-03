@@ -177,7 +177,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 7
+  orthographic size: 7.0682592
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -275,7 +275,7 @@ MonoBehaviour:
   playerPrefab: {fileID: 6626832515212413918, guid: 4454c75df4fdca343970535d419d3e70, type: 3}
   scenes:
   - {fileID: 102900000, guid: 3be19cdf73c19a84e9374a1883d1d540, type: 3}
-  - {fileID: 102900000, guid: d9feaa3c457e53146b8a839a554bdf3f, type: 3}
+  - {fileID: 102900000, guid: 9548b02a3ce73054284db9ac167c77c3, type: 3}
 --- !u!4 &1792458424
 Transform:
   m_ObjectHideFlags: 0

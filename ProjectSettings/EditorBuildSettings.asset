@@ -12,6 +12,9 @@ EditorBuildSettings:
     path: Assets/Scenes/TestScenes/TestRooms/TestRoom1.unity
     guid: 3be19cdf73c19a84e9374a1883d1d540
   - enabled: 1
-    path: Assets/Scenes/TestScenes/TestRooms/TestRoom2.unity
+    path: Assets/Scenes/TestScenes/TestRooms/TestRoom2_old.unity
     guid: d9feaa3c457e53146b8a839a554bdf3f
+  - enabled: 1
+    path: Assets/Scenes/TestScenes/TestRooms/TestRoom2_new.unity
+    guid: 9548b02a3ce73054284db9ac167c77c3
   m_configObjects: {}
