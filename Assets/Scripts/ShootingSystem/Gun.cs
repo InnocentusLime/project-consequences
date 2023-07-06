@@ -36,12 +36,16 @@ public class Gun : MonoBehaviour {
 
     private void Update() {
         // FIXME super-duper ugly botch
-        if (Input.GetMouseButtonDown(0) && CanShoot() && isPlayerControlled) {
+        if (Input.GetMouseButtonDown(0) && isPlayerControlled) {
             Shoot(PlayerShootingAngle());
         }
     }
 
-    public void Shoot(float shootingAngle) {
+    public bool Shoot(float shootingAngle) {
+        if (!CanShoot()) {
+            return false;
+        }
+
         isCoolingDown = true;
         StartCoroutine(CooldownRoutine(cooldownDuration));
 
@@ -57,6 +61,8 @@ public class Gun : MonoBehaviour {
 
             playerShootEvent.Invoke(shootConfiguration);
         }
+
+        return true;
     }
 
     private bool CanShoot() => hasGun && !isCoolingDown;
