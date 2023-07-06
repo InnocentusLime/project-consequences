@@ -20,7 +20,7 @@ public class Gun : MonoBehaviour {
         isCoolingDown = true;
         StartCoroutine(CooldownRoutine(cooldownDuration));
 
-        Bullet bullet = Instantiate(bulletPrefab, transform.localPosition,
+        Bullet bullet = Instantiate(bulletPrefab, transform.position,
             Quaternion.AngleAxis(shootingAngle, Vector3.forward));
         bullet.creator = gameObject;
 

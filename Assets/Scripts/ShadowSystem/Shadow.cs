@@ -26,7 +26,7 @@ public class Shadow : CursedBehaviour {
             angle = shootAngle + angDelta;
 
             RaycastHit2D seenObject = Physics2D.BoxCast(
-                transform.localPosition,
+                transform.position,
                 bulletSize * 0.45f,
                 angle,
                 new Vector2(

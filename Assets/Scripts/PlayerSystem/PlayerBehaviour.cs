@@ -52,7 +52,7 @@ public class PlayerBehaviour : CursedBehaviour {
         if (shot) {
             var shootConfiguration = new ShootConfiguration {
                 angle = shootingAngle,
-                position = transform.localPosition
+                position = transform.position
             };
 
             playerShootEvent.Invoke(shootConfiguration);
