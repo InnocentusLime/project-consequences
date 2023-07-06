@@ -42,7 +42,7 @@ public class RoomTester : MonoBehaviour {
 
         // TODO somehow learn to get the spawned player. (Or go back to the plan with a persistent player obj)
         GlobalRoomState.playerEnterEvent.Invoke(playerPrefab);
-        GlobalRoomState.player.GetComponent<Gun>().playerShootEvent.AddListener(
+        GlobalRoomState.player.GetComponent<PlayerBehaviour>().playerShootEvent.AddListener(
             GetComponent<ShadowDirector>().OnPlayerShoot
             );
 
@@ -65,7 +65,7 @@ public class RoomTester : MonoBehaviour {
     private void ResetRoom() {
         UnloadCurrentRoom();
 
-        PlayerState player = FindObjectOfType<PlayerState>();
+        PlayerBehaviour player = FindObjectOfType<PlayerBehaviour>();
         if (player != null) {
             Destroy(player.gameObject);
         }
