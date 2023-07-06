@@ -17,8 +17,10 @@ public class Gun : MonoBehaviour {
             return false;
         }
 
-        isCoolingDown = true;
-        StartCoroutine(CooldownRoutine(cooldownDuration));
+        if (!cooldownDuration.Equals(0.0f)) {
+            isCoolingDown = true;
+            StartCoroutine(CooldownRoutine(cooldownDuration));
+        }
 
         Bullet bullet = Instantiate(bulletPrefab, transform.position,
             Quaternion.AngleAxis(shootingAngle, Vector3.forward));
