@@ -13,7 +13,8 @@ public class RoomEntranceDoor : MonoBehaviour {
         GlobalRoomState.playerEnterEvent.RemoveListener(OnPlayerEnter);
     }
 
-    private void OnPlayerEnter(GameObject playerPrefab) {
-        GlobalRoomState.player = Instantiate(playerPrefab, transform.position, Quaternion.identity);
+    private void OnPlayerEnter() {
+        GlobalRoomState.player.transform.position = transform.position;
+        GlobalRoomState.player.SetActive(true);
     }
 }

@@ -4,35 +4,31 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.Events;
-
-public struct ShootConfiguration {
-    public float angle;
-    public Vector2 position;
-}
+using UnityEngine.UIElements;
 
 [Serializable]
-public class PlayerShootEvent : UnityEvent<ShootConfiguration> {
+public class PlayerShootEvent : UnityEvent<float, Vector2> {
 
 }
 
+[RequireComponent(typeof(PlayerMovement), typeof(Gun))]
 public class PlayerBehaviour : CursedBehaviour {
     private PlayerMovement movement;
     private Gun gun;
     private Camera mainCamera;
 
-    public PlayerShootEvent playerShootEvent;
+    [SerializeField] private PlayerShootEvent playerShootEvent;
 
     protected override void ExtraAwake() {
         gun = GetComponent<Gun>();
         movement = GetComponent<PlayerMovement>();
 
-        // TODO set explicitly
         mainCamera = Camera.main;
         Assert.IsNotNull(mainCamera);
     }
 
     public void OnBulletHit(GameObject bullet) {
-        Destroy(gameObject);
+        gameObject.SetActive(false);
     }
 
     private void Update() {
@@ -50,12 +46,7 @@ public class PlayerBehaviour : CursedBehaviour {
         movement.MoveHorizontally(Input.GetAxisRaw("Horizontal"));
 
         if (shot) {
-            var shootConfiguration = new ShootConfiguration {
-                angle = shootingAngle,
-                position = transform.position
-            };
-
-            playerShootEvent.Invoke(shootConfiguration);
+            playerShootEvent.Invoke(shootingAngle, transform.position);
         }
     }
 

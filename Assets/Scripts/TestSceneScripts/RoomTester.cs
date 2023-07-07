@@ -8,7 +8,6 @@ using UnityEngine.Assertions;
 using UnityEngine.SceneManagement;
 
 public class RoomTester : MonoBehaviour {
-    public GameObject playerPrefab;
     public SceneAsset[] scenes;
 
     private int currentRoomId;
@@ -27,7 +26,6 @@ public class RoomTester : MonoBehaviour {
             Destroy(rootGameObject);
         }
 
-        GlobalRoomState.ResetState();
         SceneManager.UnloadSceneAsync(currentRoomScene);
     }
 
@@ -39,12 +37,7 @@ public class RoomTester : MonoBehaviour {
         }
 
         currentRoomScene = SceneManager.GetSceneByPath(path);
-
-        // TODO somehow learn to get the spawned player. (Or go back to the plan with a persistent player obj)
-        GlobalRoomState.playerEnterEvent.Invoke(playerPrefab);
-        GlobalRoomState.player.GetComponent<PlayerBehaviour>().playerShootEvent.AddListener(
-            GetComponent<ShadowDirector>().OnPlayerShoot
-            );
+        GlobalRoomState.playerEnterEvent.Invoke();
 
         yield return null;
     }
@@ -64,11 +57,6 @@ public class RoomTester : MonoBehaviour {
 
     private void ResetRoom() {
         UnloadCurrentRoom();
-
-        PlayerBehaviour player = FindObjectOfType<PlayerBehaviour>();
-        if (player != null) {
-            Destroy(player.gameObject);
-        }
 
         foreach (Shadow shadow in GetComponentsInChildren<Shadow>()) {
             Destroy(shadow.gameObject);
