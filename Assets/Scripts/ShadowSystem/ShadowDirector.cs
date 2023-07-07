@@ -9,8 +9,7 @@ public class ShadowDirector : MonoBehaviour {
         Shadow shadow = Instantiate(
             shadowPrefab,
             position,
-            Quaternion.identity,
-            transform);
+            Quaternion.identity);
 
         shadow.shootAngle = angle;
         shadow.gameObject.SetActive(false);

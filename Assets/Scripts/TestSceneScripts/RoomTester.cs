@@ -37,6 +37,8 @@ public class RoomTester : MonoBehaviour {
         }
 
         currentRoomScene = SceneManager.GetSceneByPath(path);
+        Assert.IsTrue(SceneManager.SetActiveScene(currentRoomScene));
+
         GlobalRoomState.playerEnterEvent.Invoke();
 
         yield return null;
@@ -57,10 +59,6 @@ public class RoomTester : MonoBehaviour {
 
     private void ResetRoom() {
         UnloadCurrentRoom();
-
-        foreach (Shadow shadow in GetComponentsInChildren<Shadow>()) {
-            Destroy(shadow.gameObject);
-        }
 
         StartCoroutine(LoadRoom(
             AssetDatabase.GetAssetPath(scenes[currentRoomId])
