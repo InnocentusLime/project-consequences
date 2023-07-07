@@ -16,8 +16,13 @@ public class RoomTester : MonoBehaviour {
     private string nextRoomPath;
 
     private void Start() {
-        StartCoroutine(LoadRoom(AssetDatabase.GetAssetPath(scenes[0])));
         GlobalRoomState.playerLeaveEvent.AddListener(OnRoomFinish);
+
+        if (scenes.Length == 0) {
+            GlobalRoomState.playerEnterEvent.Invoke();
+        } else {
+            StartCoroutine(LoadRoom(AssetDatabase.GetAssetPath(scenes[0])));
+        }
     }
 
     private void UnloadCurrentRoom() {
@@ -45,6 +50,10 @@ public class RoomTester : MonoBehaviour {
     }
 
     private void OnRoomFinish() {
+        if (scenes.Length == 0) {
+            return;
+        }
+
         UnloadCurrentRoom();
 
         currentRoomId += 1;
