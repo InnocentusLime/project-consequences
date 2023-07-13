@@ -33,11 +33,12 @@ public class PlayerBehaviour : CursedBehaviour {
     }
 
     private void Update() {
-        bool shot = false;
         float shootingAngle = ShootingAngle();
 
         if (Input.GetMouseButtonDown(0) && hasGun) {
-            shot = gun.Shoot(shootingAngle);
+            if (gun.Shoot(shootingAngle)) {
+                playerShootEvent.Invoke(shootingAngle, transform.position);
+            }
         }
 
         if (Input.GetKey(KeyCode.Space)) {
@@ -45,10 +46,6 @@ public class PlayerBehaviour : CursedBehaviour {
         }
 
         physics.MoveHorizontally(horizontalSpeed * Input.GetAxisRaw("Horizontal"));
-
-        if (shot) {
-            playerShootEvent.Invoke(shootingAngle, transform.position);
-        }
     }
 
     private float ShootingAngle() {
