@@ -1,47 +1,58 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿// #define DEBUG_CHARACTER_PHYSICS_NORMALS
+// #define DEBUG_CHARACTER_PHYSICS_DELTA_POS
+
+using System;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class CharacterPhysics : MonoBehaviour {
+    private const int maxTicksWithoutSnapping = 200;
     private const float minMoveDistance = 0.001f;
     private const float shellRadius = 0.01f;
+    private const int instantSpeedIterCount = 2;
 
-    public bool isGrounded { get; private set; }
+    [SerializeField] private bool doGroundSnapping = true;
     [SerializeField] private float gravityModifier = 1f;
     [SerializeField] private LayerMask collisionMask;
     [SerializeField] private float minGroundNormalY = .65f;
 
-    private Rigidbody2D rb;
+    private bool isGrounded;
+    private int ticksWithoutSnapping;
+    private bool jumpQueued;
+    private float targetJumpSpeed;
     private Vector2 velocity;
-    private float targetHSpeed;
-    private ContactFilter2D contactFilter;
-
+    private float targetWalkSpeed;
     private Vector2 groundNormal;
+
+    private Rigidbody2D rb;
+    private ContactFilter2D contactFilter;
     private readonly RaycastHit2D[] hitBuffer = new RaycastHit2D[16];
 
-    public void MoveHorizontally(float hSpeed) {
-        targetHSpeed = hSpeed;
+    public void Reset() {
+        isGrounded = false;
+        groundNormal = Vector2.up;
+        targetJumpSpeed = 0f;
+        targetWalkSpeed = 0f;
+        jumpQueued = false;
+        velocity = Vector2.zero;
     }
 
+    public void MoveHorizontally(float hSpeed) {
+        targetWalkSpeed = hSpeed;
+    }
+
+    // TODO coyote time?
     public void Jump(float jumpSpeed) {
         if (!isGrounded) {
             return;
         }
 
-        velocity.y = jumpSpeed;
-    }
-
-    public void SlowdownJump() {
-        if (velocity.y <= 0f) {
-            return;
-        }
-
-        velocity.y *= .5f;
+        jumpQueued = true;
+        targetJumpSpeed = jumpSpeed;
     }
 
     private void Awake() {
-        targetHSpeed = 1f;
+        targetWalkSpeed = 1f;
         rb = GetComponent<Rigidbody2D>();
 
         contactFilter.useLayerMask = true;
@@ -49,22 +60,79 @@ public class CharacterPhysics : MonoBehaviour {
     }
 
     private void FixedUpdate() {
+        Vector2 alongGround = -Vector2.Perpendicular(groundNormal);
+
         velocity += Physics2D.gravity * (gravityModifier * Time.fixedDeltaTime);
-        velocity.x = targetHSpeed;
-
         isGrounded = false;
+        groundNormal = Vector2.up;
 
-        Vector2 moveAlongGround = -Vector2.Perpendicular(groundNormal);
-        Vector2 deltaPosition = velocity * Time.fixedDeltaTime;
+        if (jumpQueued) {
+            velocity.y = targetJumpSpeed;
+            jumpQueued = false;
+            ticksWithoutSnapping = maxTicksWithoutSnapping;
+            targetJumpSpeed = 0f;
+        }
 
-        Move(deltaPosition.x * moveAlongGround, false);
-        Move(deltaPosition.y * Vector2.up, true);
+        // For instant velocities (AKA velocities that make no sense)
+        float walkSpeedIncrement = Mathf.Abs(targetWalkSpeed) / instantSpeedIterCount;
+        Vector2 instantMoveDirection = alongGround * Mathf.Sign(targetWalkSpeed);
+        for (int i = 0; i < instantSpeedIterCount; ++i) {
+            Vector2 newMoveDirection = Move(
+                walkSpeedIncrement * instantMoveDirection,
+                false,
+                false);
+            if (newMoveDirection.magnitude * Time.fixedDeltaTime < minMoveDistance) {
+                break;
+            }
+
+            instantMoveDirection = newMoveDirection.normalized;
+        }
+
+        // For "persistent" velocities (AKA velocities that make sense from physical point of view)
+        velocity = Move(velocity, true, true);
+
+        ticksWithoutSnapping = !isGrounded ? Math.Max(0, ticksWithoutSnapping - 1) : 0;
+        if (doGroundSnapping && !isGrounded && ticksWithoutSnapping == 0) {
+            // Well, more like "rush to ground"
+            SnapToGround();
+        }
+
+#if DEBUG_CHARACTER_PHYSICS_NORMALS
+        Debug.DrawLine(
+            rb.position,
+            rb.position + groundNormal * 2f,
+            isGrounded ? Color.green : Color.red);
+#endif
     }
 
-    private void Move(Vector2 deltaPosition, bool computingYMovement) {
-        float distance = deltaPosition.magnitude;
-        if (distance <= minMoveDistance) {
+    private void SnapToGround() {
+        RaycastHit2D hit = Physics2D.Raycast(
+            rb.position,
+            Vector2.down,
+            2f,
+            contactFilter.layerMask);
+
+        if (!hit) {
             return;
+        }
+
+        Vector2 normal = hit.normal;
+        if (!GroundCheck(normal)) {
+            return;
+        }
+
+        Move(normal * -8f, false, false);
+    }
+
+    private Vector2 Move(
+        Vector2 moveVelocity,
+        bool doGroundCheck,
+        bool infiniteGroundFriction) {
+        Vector2 deltaPosition = moveVelocity * Time.fixedDeltaTime;
+        float distance = deltaPosition.magnitude;
+
+        if (distance <= minMoveDistance) {
+            return moveVelocity;
         }
 
         int collisionCount = rb.Cast(
@@ -75,34 +143,42 @@ public class CharacterPhysics : MonoBehaviour {
         for (int i = 0; i < collisionCount; ++i) {
             Vector2 normal = hitBuffer[i].normal;
 
-            bool isGroundNormal = GroundCheck(normal, computingYMovement);
-            SurfaceReaction(normal, computingYMovement, isGroundNormal);
+            if (doGroundCheck) {
+                bool isGroundNormal = GroundCheck(normal);
+
+                if (isGroundNormal && infiniteGroundFriction) {
+                    normal = Vector2.up;
+                }
+            }
+
+            float projection = Vector2.Dot(moveVelocity, normal);
+            if (projection < 0f) {
+                moveVelocity -= projection * normal;
+            }
 
             distance = Mathf.Min(distance, hitBuffer[i].distance - shellRadius);
         }
 
+#if DEBUG_CHARACTER_PHYSICS_DELTA_POS
+        Debug.DrawLine(
+            rb.position,
+            rb.position + (deltaPosition.normalized * distance).normalized,
+            Color.yellow);
+#endif
+
         rb.position += deltaPosition.normalized * distance;
+
+        return moveVelocity;
     }
 
-    private bool GroundCheck(Vector2 normal, bool computingYMovement) {
-        bool isGroundNormal = normal.y > minGroundNormalY;
-
-        isGrounded |= isGroundNormal;
-        if (computingYMovement && isGroundNormal) {
-            groundNormal = normal;
+    private bool GroundCheck(Vector2 normal) {
+        if (normal.y <= minGroundNormalY) {
+            return false;
         }
 
-        return isGroundNormal;
-    }
+        isGrounded = true;
+        groundNormal = normal;
 
-    private void SurfaceReaction(Vector2 normal, bool computingYMovement, bool isGroundNormal) {
-        if (computingYMovement && isGroundNormal) {
-            normal.x = 0f;
-        }
-
-        float projection = Vector2.Dot(velocity, normal);
-        if (projection < 0f) {
-            velocity -= projection * normal;
-        }
+        return true;
     }
 }

@@ -11,17 +11,19 @@ public class PlayerShootEvent : UnityEvent<float, Vector2> {
 
 }
 
-[RequireComponent(typeof(PlayerMovement), typeof(Gun))]
+[RequireComponent(typeof(CharacterPhysics), typeof(Gun))]
 public class PlayerBehaviour : CursedBehaviour {
-    private PlayerMovement movement;
+    private CharacterPhysics physics;
     private Gun gun;
     private Camera mainCamera;
 
+    [SerializeField] private float horizontalSpeed;
+    [SerializeField] private float jumpTakeoffSpeed;
     [SerializeField] private PlayerShootEvent playerShootEvent;
 
     protected override void ExtraAwake() {
         gun = GetComponent<Gun>();
-        movement = GetComponent<PlayerMovement>();
+        physics = GetComponent<CharacterPhysics>();
 
         mainCamera = Camera.main;
         Assert.IsNotNull(mainCamera);
@@ -40,10 +42,10 @@ public class PlayerBehaviour : CursedBehaviour {
         }
 
         if (Input.GetKey(KeyCode.Space)) {
-            movement.Jump();
+            physics.Jump(jumpTakeoffSpeed);
         }
 
-        movement.MoveHorizontally(Input.GetAxisRaw("Horizontal"));
+        physics.MoveHorizontally(horizontalSpeed * Input.GetAxisRaw("Horizontal"));
 
         if (shot) {
             playerShootEvent.Invoke(shootingAngle, transform.position);
