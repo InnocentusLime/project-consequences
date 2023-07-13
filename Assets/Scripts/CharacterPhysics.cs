@@ -1,12 +1,11 @@
-﻿// #define DEBUG_CHARACTER_PHYSICS_NORMALS
-// #define DEBUG_CHARACTER_PHYSICS_DELTA_POS
+﻿#define DEBUG_CHARACTER_PHYSICS_NORMALS
+#define DEBUG_CHARACTER_PHYSICS_DELTA_POS
 
 using System;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class CharacterPhysics : MonoBehaviour {
-    private const int maxTicksWithoutSnapping = 200;
     private const float minMoveDistance = 0.001f;
     private const float shellRadius = 0.01f;
     private const int instantSpeedIterCount = 2;
@@ -16,8 +15,8 @@ public class CharacterPhysics : MonoBehaviour {
     [SerializeField] private LayerMask collisionMask;
     [SerializeField] private float minGroundNormalY = .65f;
 
-    private bool isGrounded;
-    private int ticksWithoutSnapping;
+    private int ticksOffGround;
+    private int ticksJump;
     private bool jumpQueued;
     private float targetJumpSpeed;
     private Vector2 velocity;
@@ -29,7 +28,8 @@ public class CharacterPhysics : MonoBehaviour {
     private readonly RaycastHit2D[] hitBuffer = new RaycastHit2D[16];
 
     public void Reset() {
-        isGrounded = false;
+        ticksOffGround = 0;
+        ticksJump = 0;
         groundNormal = Vector2.up;
         targetJumpSpeed = 0f;
         targetWalkSpeed = 0f;
@@ -43,7 +43,7 @@ public class CharacterPhysics : MonoBehaviour {
 
     // TODO coyote time?
     public void Jump(float jumpSpeed) {
-        if (!isGrounded) {
+        if (ticksOffGround > 0) {
             return;
         }
 
@@ -63,15 +63,8 @@ public class CharacterPhysics : MonoBehaviour {
         Vector2 alongGround = -Vector2.Perpendicular(groundNormal);
 
         velocity += Physics2D.gravity * (gravityModifier * Time.fixedDeltaTime);
-        isGrounded = false;
+        ticksOffGround = Math.Min(ticksOffGround + 1, 100);
         groundNormal = Vector2.up;
-
-        if (jumpQueued) {
-            velocity.y = targetJumpSpeed;
-            jumpQueued = false;
-            ticksWithoutSnapping = maxTicksWithoutSnapping;
-            targetJumpSpeed = 0f;
-        }
 
         // For instant velocities (AKA velocities that make no sense)
         float walkSpeedIncrement = Mathf.Abs(targetWalkSpeed) / instantSpeedIterCount;
@@ -79,7 +72,7 @@ public class CharacterPhysics : MonoBehaviour {
         for (int i = 0; i < instantSpeedIterCount; ++i) {
             Vector2 newMoveDirection = Move(
                 walkSpeedIncrement * instantMoveDirection,
-                false,
+                true,
                 false);
             if (newMoveDirection.magnitude * Time.fixedDeltaTime < minMoveDistance) {
                 break;
@@ -88,11 +81,18 @@ public class CharacterPhysics : MonoBehaviour {
             instantMoveDirection = newMoveDirection.normalized;
         }
 
+        ticksJump = Math.Min(ticksJump + 1, 10);
+        if (jumpQueued) {
+            velocity.y = targetJumpSpeed;
+            jumpQueued = false;
+            targetJumpSpeed = 0f;
+            ticksJump = 0;
+        }
+
         // For "persistent" velocities (AKA velocities that make sense from physical point of view)
         velocity = Move(velocity, true, true);
 
-        ticksWithoutSnapping = !isGrounded ? Math.Max(0, ticksWithoutSnapping - 1) : 0;
-        if (doGroundSnapping && !isGrounded && ticksWithoutSnapping == 0) {
+        if (ShouldSnapToGround()) {
             // Well, more like "rush to ground"
             SnapToGround();
         }
@@ -101,9 +101,11 @@ public class CharacterPhysics : MonoBehaviour {
         Debug.DrawLine(
             rb.position,
             rb.position + groundNormal * 2f,
-            isGrounded ? Color.green : Color.red);
+            ticksOffGround == 0 ? Color.green : Color.red);
 #endif
     }
+
+    private bool ShouldSnapToGround() => doGroundSnapping && ticksOffGround == 1 && ticksJump > 2;
 
     private void SnapToGround() {
         RaycastHit2D hit = Physics2D.Raycast(
@@ -142,18 +144,15 @@ public class CharacterPhysics : MonoBehaviour {
             distance + shellRadius);
         for (int i = 0; i < collisionCount; ++i) {
             Vector2 normal = hitBuffer[i].normal;
-
-            if (doGroundCheck) {
-                bool isGroundNormal = GroundCheck(normal);
-
-                if (isGroundNormal && infiniteGroundFriction) {
-                    normal = Vector2.up;
-                }
-            }
-
+            bool isGroundNormal = doGroundCheck && GroundCheck(normal);
             float projection = Vector2.Dot(moveVelocity, normal);
+
             if (projection < 0f) {
                 moveVelocity -= projection * normal;
+            }
+
+            if (isGroundNormal && infiniteGroundFriction) {
+                moveVelocity = Vector2.zero;
             }
 
             distance = Mathf.Min(distance, hitBuffer[i].distance - shellRadius);
@@ -176,7 +175,7 @@ public class CharacterPhysics : MonoBehaviour {
             return false;
         }
 
-        isGrounded = true;
+        ticksOffGround = 0;
         groundNormal = normal;
 
         return true;
