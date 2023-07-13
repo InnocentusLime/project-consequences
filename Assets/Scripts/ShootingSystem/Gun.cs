@@ -6,7 +6,6 @@ using UnityEngine.Assertions;
 using UnityEngine.Events;
 
 public class Gun : MonoBehaviour {
-    public bool hasGun = true;
     public float cooldownDuration = 0.8f;
     public Bullet bulletPrefab;
 
@@ -32,7 +31,7 @@ public class Gun : MonoBehaviour {
         return true;
     }
 
-    private bool CanShoot() => hasGun && !isCoolingDown;
+    private bool CanShoot() => !isCoolingDown;
 
     private IEnumerator CooldownRoutine(float duration) {
         yield return new WaitForSeconds(duration);

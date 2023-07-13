@@ -1,10 +1,7 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.Events;
-using UnityEngine.UIElements;
 
 [Serializable]
 public class PlayerShootEvent : UnityEvent<float, Vector2> {
@@ -13,6 +10,8 @@ public class PlayerShootEvent : UnityEvent<float, Vector2> {
 
 [RequireComponent(typeof(CharacterPhysics), typeof(Gun))]
 public class PlayerBehaviour : CursedBehaviour {
+    public bool hasGun;
+
     private CharacterPhysics physics;
     private Gun gun;
     private Camera mainCamera;
@@ -47,7 +46,7 @@ public class PlayerBehaviour : CursedBehaviour {
 
         physics.MoveHorizontally(horizontalSpeed * Input.GetAxisRaw("Horizontal"));
 
-        if (shot) {
+        if (shot && hasGun) {
             playerShootEvent.Invoke(shootingAngle, transform.position);
         }
     }
@@ -59,7 +58,7 @@ public class PlayerBehaviour : CursedBehaviour {
     }
 
     protected override void OnConsequenceTime() {
-        gun.hasGun = false;
+        hasGun = false;
     }
 
     protected override void OnMadnessChange(int madnessLevel) {
