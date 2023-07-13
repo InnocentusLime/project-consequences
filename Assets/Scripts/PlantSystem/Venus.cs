@@ -18,6 +18,9 @@ public class Venus : CursedBehaviour {
         display.SetActive(false);
     }
 
+    public void OnSeeingObject(GameObject seeingObject) {
+        Destroy(seeingObject);
+    }
 
     private void Update() {
         if (!isActive) {
