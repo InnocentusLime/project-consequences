@@ -17,7 +17,7 @@ public class PlayerLeaveEvent : UnityEvent {
 }
 
 [Serializable]
-public class PlayerEnterEvent : UnityEvent<GameObject> {
+public class PlayerEnterEvent : UnityEvent {
 }
 
 public class GlobalRoomState : MonoBehaviour {
@@ -27,12 +27,8 @@ public class GlobalRoomState : MonoBehaviour {
     public static PlayerLeaveEvent playerLeaveEvent = new();
     public static PlayerEnterEvent playerEnterEvent = new();
 
-    public static void ResetState() {
-        player = null;
-    }
-
     private void Awake() {
-        //ResetState();
+        player = FindFirstObjectByType<PlayerBehaviour>(FindObjectsInactive.Include).gameObject;
         setMadnessLevelEvent ??= new SetMadnessLevel();
         startConsequenceTimeEvent ??= new StartConsequenceTime();
         playerEnterEvent ??= new PlayerEnterEvent();

@@ -239,9 +239,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 6626832515212413918}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: eacd76fb5dc259746ab70d6985428e0f, type: 3}
+  m_Script: {fileID: 11500000, guid: d35845e08f61fbf41b2eb7860d4738c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerShootEvent:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &3447528173359765449
 MonoBehaviour:
   m_ObjectHideFlags: 0

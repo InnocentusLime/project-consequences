@@ -5,14 +5,13 @@ using UnityEngine;
 public class ShadowDirector : MonoBehaviour {
     public Shadow shadowPrefab;
 
-    public void OnPlayerShoot(ShootConfiguration shootConfiguration) {
+    public void OnPlayerShoot(float angle, Vector2 position) {
         Shadow shadow = Instantiate(
             shadowPrefab,
-            shootConfiguration.position,
-            Quaternion.identity,
-            transform);
+            position,
+            Quaternion.identity);
 
-        shadow.shootAngle = shootConfiguration.angle;
+        shadow.shootAngle = angle;
         shadow.gameObject.SetActive(false);
     }
 }

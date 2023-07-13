@@ -8,7 +8,6 @@ using UnityEngine.Assertions;
 using UnityEngine.SceneManagement;
 
 public class RoomTester : MonoBehaviour {
-    public GameObject playerPrefab;
     public SceneAsset[] scenes;
 
     private int currentRoomId;
@@ -17,8 +16,13 @@ public class RoomTester : MonoBehaviour {
     private string nextRoomPath;
 
     private void Start() {
-        StartCoroutine(LoadRoom(AssetDatabase.GetAssetPath(scenes[0])));
         GlobalRoomState.playerLeaveEvent.AddListener(OnRoomFinish);
+
+        if (scenes.Length == 0) {
+            GlobalRoomState.playerEnterEvent.Invoke();
+        } else {
+            StartCoroutine(LoadRoom(AssetDatabase.GetAssetPath(scenes[0])));
+        }
     }
 
     private void UnloadCurrentRoom() {
@@ -27,7 +31,6 @@ public class RoomTester : MonoBehaviour {
             Destroy(rootGameObject);
         }
 
-        GlobalRoomState.ResetState();
         SceneManager.UnloadSceneAsync(currentRoomScene);
     }
 
@@ -39,17 +42,18 @@ public class RoomTester : MonoBehaviour {
         }
 
         currentRoomScene = SceneManager.GetSceneByPath(path);
+        Assert.IsTrue(SceneManager.SetActiveScene(currentRoomScene));
 
-        // TODO somehow learn to get the spawned player. (Or go back to the plan with a persistent player obj)
-        GlobalRoomState.playerEnterEvent.Invoke(playerPrefab);
-        GlobalRoomState.player.GetComponent<Gun>().playerShootEvent.AddListener(
-            GetComponent<ShadowDirector>().OnPlayerShoot
-            );
+        GlobalRoomState.playerEnterEvent.Invoke();
 
         yield return null;
     }
 
     private void OnRoomFinish() {
+        if (scenes.Length == 0) {
+            return;
+        }
+
         UnloadCurrentRoom();
 
         currentRoomId += 1;
@@ -64,15 +68,6 @@ public class RoomTester : MonoBehaviour {
 
     private void ResetRoom() {
         UnloadCurrentRoom();
-
-        PlayerState player = FindObjectOfType<PlayerState>();
-        if (player != null) {
-            Destroy(player.gameObject);
-        }
-
-        foreach (Shadow shadow in GetComponentsInChildren<Shadow>()) {
-            Destroy(shadow.gameObject);
-        }
 
         StartCoroutine(LoadRoom(
             AssetDatabase.GetAssetPath(scenes[currentRoomId])
