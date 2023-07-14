@@ -23,9 +23,8 @@ public class EyeSight : MonoBehaviour {
     [SerializeField] private LayerMask reportMask;
     [SerializeField] private ObjectFoundEvent objectFoundEvent;
 
-    void FixedUpdate() {
-        Vector2 raycastStart = new Vector2(transform.position.x + rayOffset.x,
-            transform.position.y + rayOffset.y);
+    private void FixedUpdate() {
+        Vector2 raycastStart = (Vector2)transform.position + rayOffset;
 
         for (float rayAngle = -sightAngle / 2f; rayAngle <= sightAngle / 2f; rayAngle += sightAngleStep) {
             Vector2 raycastDirection = new Vector2(sightDirection.x * Mathf.Cos(rayAngle * Mathf.Deg2Rad),
