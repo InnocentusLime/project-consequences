@@ -1,3 +1,5 @@
+//#define DEBUG_EYESIGHT_RAYS
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -22,24 +24,34 @@ public class EyeSight : MonoBehaviour {
     [SerializeField] private ObjectFoundEvent objectFoundEvent;
 
     void FixedUpdate() {
-        float start = -sightAngle / 2;
-        float end = sightAngle / 2;
-
-        Vector2 startRaycast = new Vector2(transform.position.x + rayOffset.x,
+        Vector2 raycastStart = new Vector2(transform.position.x + rayOffset.x,
             transform.position.y + rayOffset.y);
 
-        for (; start <= end; start += sightAngleStep) {
-            Vector2 newDirection = new Vector2(sightDirection.x * Mathf.Cos(start * Mathf.Deg2Rad),
-                sightDirection.x * Mathf.Sin(start * Mathf.Deg2Rad));
+        for (float rayAngle = -sightAngle / 2f; rayAngle <= sightAngle / 2f; rayAngle += sightAngleStep) {
+            Vector2 raycastDirection = new Vector2(sightDirection.x * Mathf.Cos(rayAngle * Mathf.Deg2Rad),
+                sightDirection.x * Mathf.Sin(rayAngle * Mathf.Deg2Rad));
 
-            Debug.DrawLine(startRaycast, startRaycast + newDirection * rayLength, Color.red);
+            RaycastHit2D hit = Physics2D.Raycast(raycastStart, raycastDirection, rayLength, sightMask);
 
-            RaycastHit2D hit = Physics2D.Raycast(startRaycast, newDirection, rayLength, sightMask);
+#if DEBUG_EYESIGHT_RAYS
+            Debug.DrawLine(
+                raycastStart,
+                raycastStart + raycastDirection * (hit ? hit.distance : rayLength),
+                Color.red
+            );
+#endif
 
-            if (hit.collider != null && ((1 << hit.collider.gameObject.layer) & reportMask) != 0) {
-                objectFoundEvent.Invoke(hit.collider.gameObject);
-                break;
+            if (!hit) {
+                continue;
             }
+
+            int objectLayerMask = 1 << hit.collider.gameObject.layer;
+            if ((objectLayerMask & reportMask) == 0) {
+                continue;
+            }
+
+            objectFoundEvent.Invoke(hit.collider.gameObject);
+            break;
         }
     }
 }
