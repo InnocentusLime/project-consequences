@@ -15,6 +15,7 @@ public class CharacterPhysics : MonoBehaviour {
     [SerializeField] private float gravityModifier = 1f;
     [SerializeField] private LayerMask collisionMask;
     [SerializeField] private float minGroundNormalY = .65f;
+    [SerializeField] private bool persistentSpeedFriction = true;
 
     // Object state. Reset when needed
     private int ticksOffGround;
@@ -112,7 +113,7 @@ public class CharacterPhysics : MonoBehaviour {
 
     private void ProcessPersistentSpeed() {
         Vector2 inputVelocity = velocity + Physics2D.gravity * (gravityModifier * Time.fixedDeltaTime);
-        velocity = Move(inputVelocity, true, true);
+        velocity = Move(inputVelocity, true, persistentSpeedFriction);
     }
 
     private void GroundSnapping() {
