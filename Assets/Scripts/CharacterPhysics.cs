@@ -113,7 +113,8 @@ public class CharacterPhysics : MonoBehaviour {
     }
 
     private void ProcessPersistentSpeed() {
-        velocity = Move(velocity + Physics2D.gravity * Time.fixedDeltaTime, true, persistentSpeedFriction);
+        Vector2 gravity = Physics2D.gravity * (Time.fixedDeltaTime * gravityModifier);
+        velocity = Move(velocity + gravity, true, persistentSpeedFriction);
     }
 
     private void GroundSnapping() {
