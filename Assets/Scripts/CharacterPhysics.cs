@@ -1,5 +1,6 @@
 ﻿// #define DEBUG_CHARACTER_PHYSICS_NORMALS
 // #define DEBUG_CHARACTER_PHYSICS_DELTA_POS
+// #define DEBUG_CHARACTER_PHYSICS_BREAK_ON_PENETRATION
 
 using System;
 using UnityEngine;
@@ -112,8 +113,7 @@ public class CharacterPhysics : MonoBehaviour {
     }
 
     private void ProcessPersistentSpeed() {
-        Vector2 inputVelocity = velocity + Physics2D.gravity * (gravityModifier * Time.fixedDeltaTime);
-        velocity = Move(inputVelocity, true, persistentSpeedFriction);
+        velocity = Move(velocity + Physics2D.gravity * Time.fixedDeltaTime, true, persistentSpeedFriction);
     }
 
     private void GroundSnapping() {
@@ -160,14 +160,25 @@ public class CharacterPhysics : MonoBehaviour {
             }
 
             distance = Mathf.Min(distance, hitBuffer[i].distance - shellRadius);
+
+#if DEBUG_CHARACTER_PHYSICS_BREAK_ON_PENETRATION
+            if (distance < 0f) {
+                Debug.LogError("Penetration triggered");
+                Debug.Break();
+            }
+#endif
         }
+
+        // if (distance < minMoveDistance) {
+        //     return moveVelocity;
+        // }
 
         deltaPosition = deltaPosition.normalized * distance;
         rb.position += deltaPosition;
 
 #if DEBUG_CHARACTER_PHYSICS_DELTA_POS
         Vector2 pos = rb.position;
-        Debug.DrawLine(pos - deltaPosition, pos, Color.yellow);
+        Debug.DrawLine(pos - deltaPosition.normalized, pos, Color.yellow);
 #endif
 
         return moveVelocity;
