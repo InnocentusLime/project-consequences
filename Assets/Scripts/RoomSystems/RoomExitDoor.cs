@@ -20,7 +20,7 @@ public class RoomExitDoor : MonoBehaviour {
             return;
         }
 
-        Destroy(actor);
+        actor.SetActive(false);
         GlobalRoomState.playerLeaveEvent.Invoke();
     }
 

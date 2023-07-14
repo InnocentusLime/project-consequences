@@ -1,13 +1,6 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 public class PlayerInteraction : MonoBehaviour {
-    [SerializeField] private Collider2D interactionZone;
-
     private readonly Collider2D[] collisionBuffer = new Collider2D[3];
     private ContactFilter2D interactableLayerFilter;
 
@@ -17,17 +10,19 @@ public class PlayerInteraction : MonoBehaviour {
         interactableLayerFilter.useTriggers = true;
     }
 
-    // ReSharper disable Unity.PerformanceAnalysis
-    private IEnumerable<Interactable> GetTouchedInteractable() {
-        int count = interactionZone.OverlapCollider(interactableLayerFilter, collisionBuffer);
+    // TODO TryGetComponent is better than `GetComponent` it seems. See where we can place it
+    // TODO fix in the future to make interaction collider more editable
+    public void Interact() {
+        int interactionCount = Physics2D.OverlapBox(
+            transform.position,
+            new Vector2(1.5f, .75f),
+            0f,
+            interactableLayerFilter,
+            collisionBuffer);
 
-        return collisionBuffer.Take(count)
-            .Select(x => x.gameObject.GetComponent<Interactable>());
-    }
-
-    private void Update() {
-        if (Input.GetKeyDown(KeyCode.E)) {
-            foreach (Interactable interactable in GetTouchedInteractable()) {
+        for (int i = 0; i < interactionCount; ++i) {
+            bool gotInteractable = collisionBuffer[i].TryGetComponent(out Interactable interactable);
+            if (gotInteractable) {
                 interactable.interactionEvent.Invoke(gameObject);
             }
         }
