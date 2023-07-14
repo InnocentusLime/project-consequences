@@ -10,26 +10,35 @@ public class CharacterPhysics : MonoBehaviour {
     private const float shellRadius = 0.01f;
     private const int instantSpeedIterCount = 2;
 
+    // Parameters. Do not change in code
     [SerializeField] private bool doGroundSnapping = true;
     [SerializeField] private float gravityModifier = 1f;
     [SerializeField] private LayerMask collisionMask;
     [SerializeField] private float minGroundNormalY = .65f;
 
+    // Object state. Reset when needed
     private int ticksOffGround;
-    private int ticksJump;
+    private int ticksSinceLastJump;
     private bool jumpQueued;
     private float targetJumpSpeed;
     private Vector2 velocity;
     private float targetWalkSpeed;
     private Vector2 groundNormal;
 
+    // Buffers and caches. Do not touch.
     private Rigidbody2D rb;
     private ContactFilter2D contactFilter;
     private readonly RaycastHit2D[] hitBuffer = new RaycastHit2D[16];
 
+    private void Awake() {
+        rb = GetComponent<Rigidbody2D>();
+
+        contactFilter.SetLayerMask(collisionMask);
+    }
+
     public void Reset() {
         ticksOffGround = 0;
-        ticksJump = 0;
+        ticksSinceLastJump = 0;
         groundNormal = Vector2.up;
         targetJumpSpeed = 0f;
         targetWalkSpeed = 0f;
@@ -43,7 +52,7 @@ public class CharacterPhysics : MonoBehaviour {
 
     // TODO coyote time?
     public void Jump(float jumpSpeed) {
-        if (ticksOffGround > 0) {
+        if (!IsOnGround()) {
             return;
         }
 
@@ -51,85 +60,78 @@ public class CharacterPhysics : MonoBehaviour {
         targetJumpSpeed = jumpSpeed;
     }
 
-    private void Awake() {
-        targetWalkSpeed = 1f;
-        rb = GetComponent<Rigidbody2D>();
-
-        contactFilter.useLayerMask = true;
-        contactFilter.layerMask = collisionMask;
-    }
-
     private void FixedUpdate() {
         Vector2 alongGround = -Vector2.Perpendicular(groundNormal);
 
-        velocity += Physics2D.gravity * (gravityModifier * Time.fixedDeltaTime);
         ticksOffGround = Math.Min(ticksOffGround + 1, 100);
         groundNormal = Vector2.up;
 
-        // For instant velocities (AKA velocities that make no sense)
-        float walkSpeedIncrement = Mathf.Abs(targetWalkSpeed) / instantSpeedIterCount;
-        Vector2 instantMoveDirection = alongGround * Mathf.Sign(targetWalkSpeed);
-        for (int i = 0; i < instantSpeedIterCount; ++i) {
-            Vector2 newMoveDirection = Move(
-                walkSpeedIncrement * instantMoveDirection,
-                true,
-                false);
-            if (newMoveDirection.magnitude * Time.fixedDeltaTime < minMoveDistance) {
-                break;
-            }
+        ProcessInstantSpeed(alongGround * targetWalkSpeed);
+        ProcessJump();
 
-            instantMoveDirection = newMoveDirection.normalized;
-        }
+        ProcessPersistentSpeed();
 
-        ticksJump = Math.Min(ticksJump + 1, 10);
-        if (jumpQueued) {
-            velocity.y = targetJumpSpeed;
-            jumpQueued = false;
-            targetJumpSpeed = 0f;
-            ticksJump = 0;
-        }
-
-        // For "persistent" velocities (AKA velocities that make sense from physical point of view)
-        velocity = Move(velocity, true, true);
-
-        if (ShouldSnapToGround()) {
-            // Well, more like "rush to ground"
-            SnapToGround();
+        if (doGroundSnapping) {
+            GroundSnapping();
         }
 
 #if DEBUG_CHARACTER_PHYSICS_NORMALS
-        Debug.DrawLine(
-            rb.position,
-            rb.position + groundNormal * 2f,
-            ticksOffGround == 0 ? Color.green : Color.red);
+        Vector2 pos = rb.position;
+        Color normalCol = IsOnGround() ? Color.green : Color.red;
+        Debug.DrawLine(pos,pos + groundNormal, normalCol);
 #endif
     }
 
-    private bool ShouldSnapToGround() => doGroundSnapping && ticksOffGround == 1 && ticksJump > 2;
+    private void ProcessInstantSpeed(Vector2 instantSpeed) {
+        float walkSpeedIncrement = instantSpeed.magnitude / instantSpeedIterCount;
+        Vector2 instantMoveDirection = instantSpeed.normalized;
 
-    private void SnapToGround() {
+        for (int i = 0; i < instantSpeedIterCount; ++i) {
+            Vector2 moveSpeed = walkSpeedIncrement * instantMoveDirection;
+            Vector2 adjustedMoveSpeed = Move(moveSpeed, true, false);
+
+            if (adjustedMoveSpeed.magnitude * Time.fixedDeltaTime < minMoveDistance) {
+                break;
+            }
+
+            instantMoveDirection = adjustedMoveSpeed.normalized;
+        }
+    }
+
+    private void ProcessJump() {
+        ticksSinceLastJump = Math.Min(ticksSinceLastJump + 1, 10);
+        if (!jumpQueued) {
+            return;
+        }
+
+        velocity.y = targetJumpSpeed;
+        jumpQueued = false;
+        targetJumpSpeed = 0f;
+        ticksSinceLastJump = 0;
+    }
+
+    private void ProcessPersistentSpeed() {
+        Vector2 inputVelocity = velocity + Physics2D.gravity * (gravityModifier * Time.fixedDeltaTime);
+        velocity = Move(inputVelocity, true, true);
+    }
+
+    private void GroundSnapping() {
+        bool isItTimeToSnap = ticksOffGround == 1 && ticksSinceLastJump > 2;
         RaycastHit2D hit = Physics2D.Raycast(
             rb.position,
             Vector2.down,
-            2f,
-            contactFilter.layerMask);
+            2f, contactFilter.layerMask);
 
-        if (!hit) {
+        if (!isItTimeToSnap || !hit || !IsGroundNormal(hit.normal)) {
             return;
         }
 
-        Vector2 normal = hit.normal;
-        if (!GroundCheck(normal)) {
-            return;
-        }
-
-        Move(normal * -8f, false, false);
+        SetGroundNormal(hit.normal);
+        Move(hit.normal * -8f, false, false);
     }
 
-    private Vector2 Move(
-        Vector2 moveVelocity,
-        bool doGroundCheck,
-        bool infiniteGroundFriction) {
+    // TODO this doesn't work well when infinite friction is disabled. I should fix that later
+    private Vector2 Move(Vector2 moveVelocity, bool doGroundCheck, bool infiniteGroundFriction) {
         Vector2 deltaPosition = moveVelocity * Time.fixedDeltaTime;
         float distance = deltaPosition.magnitude;
 
@@ -137,18 +139,19 @@ public class CharacterPhysics : MonoBehaviour {
             return moveVelocity;
         }
 
-        int collisionCount = rb.Cast(
-            deltaPosition,
-            contactFilter,
-            hitBuffer,
-            distance + shellRadius);
+        int collisionCount = rb.Cast(deltaPosition, contactFilter, hitBuffer, distance + shellRadius);
+
         for (int i = 0; i < collisionCount; ++i) {
             Vector2 normal = hitBuffer[i].normal;
-            bool isGroundNormal = doGroundCheck && GroundCheck(normal);
+            bool isGroundNormal = doGroundCheck && IsGroundNormal(normal);
             float projection = Vector2.Dot(moveVelocity, normal);
 
             if (projection < 0f) {
                 moveVelocity -= projection * normal;
+            }
+
+            if (isGroundNormal) {
+                SetGroundNormal(normal);
             }
 
             if (isGroundNormal && infiniteGroundFriction) {
@@ -158,26 +161,23 @@ public class CharacterPhysics : MonoBehaviour {
             distance = Mathf.Min(distance, hitBuffer[i].distance - shellRadius);
         }
 
-#if DEBUG_CHARACTER_PHYSICS_DELTA_POS
-        Debug.DrawLine(
-            rb.position,
-            rb.position + (deltaPosition.normalized * distance).normalized,
-            Color.yellow);
-#endif
+        deltaPosition = deltaPosition.normalized * distance;
+        rb.position += deltaPosition;
 
-        rb.position += deltaPosition.normalized * distance;
+#if DEBUG_CHARACTER_PHYSICS_DELTA_POS
+        Vector2 pos = rb.position;
+        Debug.DrawLine(pos - deltaPosition, pos, Color.yellow);
+#endif
 
         return moveVelocity;
     }
 
-    private bool GroundCheck(Vector2 normal) {
-        if (normal.y <= minGroundNormalY) {
-            return false;
-        }
+    public bool IsOnGround() => ticksOffGround == 0;
 
+    private bool IsGroundNormal(Vector2 normal) => normal.y > minGroundNormalY;
+
+    private void SetGroundNormal(Vector2 normal) {
         ticksOffGround = 0;
         groundNormal = normal;
-
-        return true;
     }
 }
