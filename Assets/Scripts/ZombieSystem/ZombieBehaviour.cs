@@ -4,6 +4,8 @@ using UnityEngine;
 using UnityEngine.Serialization;
 
 public class ZombieBehaviour : CursedBehaviour {
+    private Damageable damageable;
+
     public Vector2 movingDirection;
     private EyeSight eyeSight;
 
@@ -19,6 +21,7 @@ public class ZombieBehaviour : CursedBehaviour {
     }
 
     protected override void ExtraAwake() {
+        damageable = GetComponent<Damageable>();
         rigidBody2D = GetComponent<Rigidbody2D>();
         eyeSight = GetComponent<EyeSight>();
         movingDirection = eyeSight.sightDirection;
@@ -44,7 +47,7 @@ public class ZombieBehaviour : CursedBehaviour {
             layerMask: LayerMask.GetMask("Player"));
 
         if (hitPlayer.collider != null && hitPlayer.collider.gameObject == GlobalRoomState.player) {
-            Destroy(GlobalRoomState.player);
+            GlobalRoomState.player.GetComponent<Damageable>().Damage(DamageType.ZombiePunch);
         }
 
         if (hitGround.collider != null) {
@@ -87,7 +90,7 @@ public class ZombieBehaviour : CursedBehaviour {
 
     protected override void OnConsequenceTime() {
         if (!isDead) {
-            Destroy(gameObject);
+            damageable.Damage(DamageType.DecayDamage);
             return;
         }
 

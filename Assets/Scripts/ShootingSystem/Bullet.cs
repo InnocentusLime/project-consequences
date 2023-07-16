@@ -30,10 +30,8 @@ public class Bullet : MonoBehaviour {
             return;
         }
 
-        Hittable hittable = colGameObject.GetComponent<Hittable>();
-
-        if (hittable != null) {
-            hittable.bulletHitEvent.Invoke(gameObject);
+        if (colGameObject.TryGetComponent(out Damageable damageable)) {
+            damageable.Damage(DamageType.BulletHit);
         }
 
         Destroy(gameObject);
