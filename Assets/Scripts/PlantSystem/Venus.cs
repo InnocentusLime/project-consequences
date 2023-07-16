@@ -1,15 +1,15 @@
 // TODO make breakable pod
 
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 public class Venus : CursedBehaviour {
+    private Damageable damageable;
     private EyeSight eyesight;
     public GameObject display;
 
     protected override void ExtraAwake() {
+        damageable = GetComponent<Damageable>();
         eyesight = GetComponent<EyeSight>();
         display.SetActive(false);
 
@@ -17,14 +17,19 @@ public class Venus : CursedBehaviour {
     }
 
     public void OnSeeingObject(GameObject objectToEat) {
-        if (objectToEat == GlobalRoomState.player) {
-            Destroy(objectToEat);
+        if (!objectToEat.TryGetComponent(out Edible edible)) {
             return;
         }
 
-        if (objectToEat.GetComponent<ZombieBehaviour>() != null) {
-            Destroy(objectToEat);
-            Destroy(gameObject);
+        edible.GetEaten(DamageType.VenusEat);
+        switch (edible.GetFoodType()) {
+            case FoodType.Harmless:
+                break;
+            case FoodType.Poisonous:
+                damageable.Damage(DamageType.FoodPoison);
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
         }
     }
 
