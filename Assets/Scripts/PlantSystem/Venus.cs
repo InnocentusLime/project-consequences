@@ -17,14 +17,18 @@ public class Venus : CursedBehaviour {
     }
 
     public void OnSeeingObject(GameObject objectToEat) {
-        if (objectToEat == GlobalRoomState.player) {
-            Destroy(objectToEat);
-            return;
-        }
-
-        if (objectToEat.GetComponent<ZombieBehaviour>() != null) {
-            Destroy(objectToEat);
-            Destroy(gameObject);
+        Edible edible = objectToEat.GetComponent<Edible>();
+        if (edible != null) {
+            if (edible.GetFoodType() == FoodType.Harmless) {
+                edible.GetEaten(DamageType.VenusEat);
+            }
+            if (edible.GetFoodType() == FoodType.Poisonous) {
+                edible.GetEaten(DamageType.VenusEat);
+                Damageable damageable = GetComponent<Damageable>();
+                if (damageable != null) {
+                    damageable.Damage(DamageType.FoodPoison);
+                }
+            }
         }
     }
 

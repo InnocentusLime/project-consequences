@@ -4,6 +4,7 @@ using UnityEngine.Events;
 public enum DamageType
 {
     BulletHit,
+    FoodPoison,
     VenusEat,
     ZombiePunch
 }
