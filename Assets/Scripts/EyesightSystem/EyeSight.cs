@@ -15,12 +15,12 @@ public class ObjectFoundEvent : UnityEvent<GameObject> {
 public class EyeSight : MonoBehaviour {
     public Vector2 sightDirection;
     public Vector2 rayOffset;
+    public LayerMask sightMask;
+    public LayerMask reportMask;
 
     [SerializeField] private float rayLength;
     [SerializeField] private float sightAngle;
     [SerializeField] private float sightAngleStep;
-    [SerializeField] private LayerMask sightMask;
-    [SerializeField] private LayerMask reportMask;
     [SerializeField] private ObjectFoundEvent objectFoundEvent;
 
     private void FixedUpdate() {
