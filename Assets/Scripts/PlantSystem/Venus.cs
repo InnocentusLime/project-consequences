@@ -19,7 +19,7 @@ public class Venus : CursedBehaviour {
     }
 
     public void OnSeeingObject(GameObject objectToEat) {
-        if (!objectToEat.TryGetComponent(out Edible edible)) {
+        if (!objectToEat.TryGetComponent(out IEdible edible)) {
             return;
         }
 

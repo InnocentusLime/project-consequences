@@ -6,20 +6,8 @@ public enum FoodType
     Poisonous
 }
 
-public class Edible : MonoBehaviour {
-    [SerializeField]
-    private FoodType foodType;
+public interface IEdible {
+    public FoodType GetFoodType();
 
-    public FoodType GetFoodType()
-    {
-        return foodType;
-    }
-
-    public void GetEaten(DamageType damageType)
-    {
-        if (TryGetComponent<IDamageable>(out IDamageable damageable))
-        {
-            damageable.Damage(damageType);
-        }
-    }
+    public void GetEaten(DamageType damageType);
 }
