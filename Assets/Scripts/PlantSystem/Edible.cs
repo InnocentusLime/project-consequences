@@ -17,7 +17,7 @@ public class Edible : MonoBehaviour {
 
     public void GetEaten(DamageType damageType)
     {
-        if (TryGetComponent<Damageable>(out Damageable damageable))
+        if (TryGetComponent<IDamageable>(out IDamageable damageable))
         {
             damageable.Damage(damageType);
         }

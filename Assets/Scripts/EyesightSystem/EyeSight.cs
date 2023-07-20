@@ -8,23 +8,35 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.PlayerLoop;
 
-[Serializable]
-public class ObjectFoundEvent : UnityEvent<GameObject> {
+public interface IEyesightClient {
+    public void OnSeenObject(GameObject obj);
+
+    public LayerMask GetSightMask();
+    public LayerMask GetReportMask();
 }
 
 public class EyeSight : MonoBehaviour {
     public Vector2 sightDirection;
     public Vector2 rayOffset;
-    public LayerMask sightMask;
-    public LayerMask reportMask;
 
     [SerializeField] private float rayLength;
     [SerializeField] private float sightAngle;
     [SerializeField] private float sightAngleStep;
-    [SerializeField] private ObjectFoundEvent objectFoundEvent;
+
+    private IEyesightClient client;
+
+    private void Awake() {
+        client = GetComponent<IEyesightClient>();
+    }
 
     private void FixedUpdate() {
+        LayerMask sightMask = client.GetSightMask();
+        LayerMask reportMask = client.GetReportMask();
         Vector2 raycastStart = (Vector2)transform.position + rayOffset;
+
+        if (sightMask == 0 || reportMask == 0) {
+            return;
+        }
 
         for (float rayAngle = -sightAngle / 2f; rayAngle <= sightAngle / 2f; rayAngle += sightAngleStep) {
             Vector2 raycastDirection = new Vector2(sightDirection.x * Mathf.Cos(rayAngle * Mathf.Deg2Rad),
@@ -49,7 +61,7 @@ public class EyeSight : MonoBehaviour {
                 continue;
             }
 
-            objectFoundEvent.Invoke(hit.collider.gameObject);
+            client.OnSeenObject(hit.collider.gameObject);
             break;
         }
     }

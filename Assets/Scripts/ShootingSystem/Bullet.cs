@@ -30,7 +30,7 @@ public class Bullet : MonoBehaviour {
             return;
         }
 
-        if (colGameObject.TryGetComponent(out Damageable damageable)) {
+        if (colGameObject.TryGetComponent(out IDamageable damageable)) {
             damageable.Damage(DamageType.BulletHit);
         }
 

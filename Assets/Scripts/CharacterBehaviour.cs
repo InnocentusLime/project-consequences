@@ -6,19 +6,16 @@ using UnityEngine;
 [Serializable]
 public struct StateFlags {
     public bool gun;
-    public bool sight;
+    public LayerMask sightMask;
+    public LayerMask reportMask;
     public bool physics;
 }
 
-[RequireComponent(typeof(EyeSight), typeof(CharacterPhysics),
-    typeof(Gun))]
-[RequireComponent(typeof(Damageable))]
-public abstract class CharacterBehaviour<T> : CursedBehaviour {
+[RequireComponent(typeof(EyeSight), typeof(CharacterPhysics))]
+public abstract class CharacterBehaviour<T> : CursedBehaviour, IDamageable, IEyesightClient {
     // Components
     private Gun gun;
-    private EyeSight eyeSight;
     private CharacterPhysics physics;
-    private Damageable damageable;
 
     // Private state fields
     private T currentState;
@@ -26,6 +23,7 @@ public abstract class CharacterBehaviour<T> : CursedBehaviour {
 
     // Interface
     [SerializeField] protected bool hasGun;
+    private IEyesightClient eyesightClientImplementation;
 
     /* Required methods */
 
@@ -33,8 +31,8 @@ public abstract class CharacterBehaviour<T> : CursedBehaviour {
 
     /* Event handlers */
 
-    protected abstract void OnSeenObject(GameObject obj);
-    protected abstract void OnDamage(DamageType damageType);
+    public abstract void Damage(DamageType damageType);
+    public abstract void OnSeenObject(GameObject obj);
 
     /* Child API */
 
@@ -42,9 +40,7 @@ public abstract class CharacterBehaviour<T> : CursedBehaviour {
         base.Awake();
 
         gun = GetComponent<Gun>();
-        eyeSight = GetComponent<EyeSight>();
         physics = GetComponent<CharacterPhysics>();
-        damageable = GetComponent<Damageable>();
 
         currentState = DefaultState();
         ApplyFlags(stateFlagsMap[currentState]);
@@ -60,9 +56,6 @@ public abstract class CharacterBehaviour<T> : CursedBehaviour {
     }
 
     protected bool Shoot(float angle) => hasGun && gun.Shoot(angle);
-    protected void Damage(DamageType damageType) => damageable.Damage(damageType);
-    protected void SetVisionTarget(LayerMask mask) => eyeSight.reportMask = mask;
-    protected void SetVisionBlocker(LayerMask mask) => eyeSight.sightMask = mask;
 
     /* Private API */
 
@@ -71,10 +64,11 @@ public abstract class CharacterBehaviour<T> : CursedBehaviour {
         hasGun = flags.gun;
         gun.enabled = flags.gun;
 
-        // Eyesight
-        eyeSight.enabled = flags.sight;
-
         // Physics
         physics.enabled = flags.physics;
     }
+
+    public LayerMask GetSightMask() => stateFlagsMap[currentState].sightMask;
+
+    public LayerMask GetReportMask() => stateFlagsMap[currentState].reportMask;
 }
