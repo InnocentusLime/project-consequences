@@ -20,7 +20,9 @@ public class ZombieBehaviour : CursedBehaviour {
     protected override void OnMadnessChange(int madnessLevel) {
     }
 
-    protected override void ExtraAwake() {
+    protected override void Awake() {
+        base.Awake();
+
         damageable = GetComponent<Damageable>();
         rigidBody2D = GetComponent<Rigidbody2D>();
         eyeSight = GetComponent<EyeSight>();

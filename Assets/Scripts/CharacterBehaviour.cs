@@ -38,8 +38,8 @@ public abstract class CharacterBehaviour<T> : CursedBehaviour {
 
     /* Child API */
 
-    protected override void ExtraAwake() {
-        base.ExtraAwake();
+    protected override void Awake() {
+        base.Awake();
 
         gun = GetComponent<Gun>();
         eyeSight = GetComponent<EyeSight>();

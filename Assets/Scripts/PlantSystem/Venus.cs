@@ -8,7 +8,9 @@ public class Venus : CursedBehaviour {
     private EyeSight eyesight;
     public GameObject display;
 
-    protected override void ExtraAwake() {
+    protected override void Awake() {
+        base.Awake();
+
         damageable = GetComponent<Damageable>();
         eyesight = GetComponent<EyeSight>();
         display.SetActive(false);

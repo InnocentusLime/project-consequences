@@ -11,7 +11,9 @@ public class Shadow : CursedBehaviour {
     private Gun gun;
     int layerMask;
 
-    protected override void ExtraAwake() {
+    protected override void Awake() {
+        base.Awake();
+
         gun = GetComponent<Gun>();
         layerMask = LayerMask.GetMask("Player") | LayerMask.GetMask("Ground");
     }

@@ -23,7 +23,9 @@ public class PlayerBehaviour : CursedBehaviour {
     [SerializeField] private float jumpTakeoffSpeed;
     [SerializeField] private PlayerShootEvent playerShootEvent;
 
-    protected override void ExtraAwake() {
+    protected override void Awake() {
+        base.Awake();
+
         gun = GetComponent<Gun>();
         physics = GetComponent<CharacterPhysics>();
         interaction = GetComponent<PlayerInteraction>();
