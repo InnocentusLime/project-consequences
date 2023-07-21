@@ -936,7 +936,6 @@ GameObject:
   - component: {fileID: 1134051926}
   - component: {fileID: 1134051925}
   - component: {fileID: 1134051924}
-  - component: {fileID: 1134051923}
   - component: {fileID: 1134051922}
   - component: {fileID: 1134051931}
   m_Layer: 10
@@ -958,33 +957,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 606b8312c9b1a13458ceec4676b6cce9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &1134051923
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1134051921}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8288a64f2b9c229488c4f72a1e1f45e0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  bulletHitEvent:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1134051924}
-        m_TargetAssemblyTypeName: PlayerHealth, Assembly-CSharp
-        m_MethodName: OnBulletHit
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
 --- !u!114 &1134051924
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1563,7 +1535,6 @@ GameObject:
   - component: {fileID: 2061955259}
   - component: {fileID: 2061955258}
   - component: {fileID: 2061955261}
-  - component: {fileID: 2061955262}
   - component: {fileID: 2061955263}
   m_Layer: 9
   m_Name: Zombie
@@ -1701,33 +1672,6 @@ MonoBehaviour:
   movingDirection: {x: 1, y: 0}
   moveSpeed: 1
   angryMul: 3
---- !u!114 &2061955262
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2061955256}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8288a64f2b9c229488c4f72a1e1f45e0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  bulletHitEvent:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 2061955261}
-        m_TargetAssemblyTypeName: ZombieBehaviour, Assembly-CSharp
-        m_MethodName: OnBulletHit
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
 --- !u!114 &2061955263
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1850,6 +1794,18 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 8796347596886266103, guid: 01cb2211376d55347a3805204840587d, type: 3}
+      propertyPath: damageEvent.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8796347596886266103, guid: 01cb2211376d55347a3805204840587d, type: 3}
+      propertyPath: damageEvent.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8796347596886266103, guid: 01cb2211376d55347a3805204840587d, type: 3}
+      propertyPath: damageEvent.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 8859342448135087961, guid: 01cb2211376d55347a3805204840587d, type: 3}
       propertyPath: m_RootOrder
       value: 11
