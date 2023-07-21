@@ -1,21 +1,45 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.Events;
+
+public enum PlayerState {
+    Normal,
+    Dead,
+    Haunted,
+}
 
 [Serializable]
 public class PlayerShootEvent : UnityEvent<float, Vector2> {
 
 }
 
-[RequireComponent(typeof(CharacterPhysics),
-    typeof(Gun),
-    typeof(PlayerInteraction))]
-public class PlayerBehaviour : CursedBehaviour {
-    public bool hasGun;
+[RequireComponent(typeof(PlayerInteraction))]
+public class PlayerBehaviour : CharacterBehaviour<PlayerState> {
+    private static readonly Dictionary<PlayerState, StateFlags> stateFlagsMapImpl = new(){
+        { PlayerState.Normal , new StateFlags {
+            gun = true,
+            sightMask = 0,
+            reportMask = 0,
+            physics = true,
+        }},
+        { PlayerState.Haunted , new StateFlags {
+            gun = false,
+            sightMask = 0,
+            reportMask = 0,
+            physics = true,
+        }},
+        { PlayerState.Dead , new StateFlags {
+            gun = false,
+            sightMask = 0,
+            reportMask = 0,
+            physics = false,
+        }},
+    };
 
-    private CharacterPhysics physics;
-    private Gun gun;
+    protected override Dictionary<PlayerState, StateFlags> stateFlagsMap => stateFlagsMapImpl;
+
     private PlayerInteraction interaction;
     private Camera mainCamera;
 
@@ -23,39 +47,60 @@ public class PlayerBehaviour : CursedBehaviour {
     [SerializeField] private float jumpTakeoffSpeed;
     [SerializeField] private PlayerShootEvent playerShootEvent;
 
+    protected override PlayerState DefaultState() => PlayerState.Normal;
+
+    public override bool ShouldJump() => Input.GetKey(KeyCode.Space);
+
+    public override float GetWalkSpeed() => horizontalSpeed * Input.GetAxisRaw("Horizontal");
+
+    public override float GetJumpSpeed() => jumpTakeoffSpeed;
+
+    public override bool OnWalk(WalkType walkType) {
+        switch (walkType) {
+            case WalkType.ChangeDirection:
+                Debug.Log("Change direction");
+                break;
+            case WalkType.Fail:
+                Debug.Log("Failed to move");
+                break;
+        }
+
+        return true;
+    }
+
+    public override void OnSuccessfulJump() {}
+
+    public override void OnLand(Vector2 groundNormal, int offGroundTicks) {}
+
+    public override void Damage(DamageType damageType) {
+        SetState(PlayerState.Dead);
+    }
+
+    public override void OnSeenObject(GameObject obj) {
+        throw new NotImplementedException();
+    }
+
     protected override void Awake() {
         base.Awake();
 
-        gun = GetComponent<Gun>();
-        physics = GetComponent<CharacterPhysics>();
         interaction = GetComponent<PlayerInteraction>();
 
         mainCamera = Camera.main;
         Assert.IsNotNull(mainCamera);
     }
 
-    public void OnBulletHit(GameObject bullet) {
-        gameObject.SetActive(false);
-    }
-
     private void Update() {
         float shootingAngle = ShootingAngle();
 
-        if (Input.GetMouseButtonDown(0) && hasGun) {
-            if (gun.Shoot(shootingAngle)) {
-                playerShootEvent.Invoke(shootingAngle, transform.position);
-            }
-        }
-
-        if (Input.GetKey(KeyCode.Space)) {
-            physics.Jump(jumpTakeoffSpeed);
+        if (Input.GetMouseButtonDown(0)) {
+            // if (gun.Shoot(shootingAngle)) {
+            //     playerShootEvent.Invoke(shootingAngle, transform.position);
+            // }
         }
 
         if (Input.GetKeyDown(KeyCode.E)) {
             interaction.Interact();
         }
-
-        physics.MoveHorizontally(horizontalSpeed * Input.GetAxisRaw("Horizontal"));
     }
 
     private float ShootingAngle() {
@@ -65,7 +110,7 @@ public class PlayerBehaviour : CursedBehaviour {
     }
 
     protected override void OnConsequenceTime() {
-        hasGun = false;
+        SetState(PlayerState.Haunted);
     }
 
     protected override void OnMadnessChange(int madnessLevel) {

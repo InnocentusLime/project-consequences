@@ -20,7 +20,6 @@ public abstract class CharacterBehaviour<T> : CursedBehaviour, IDamageable, IEye
 
     // Private state fields
     private T currentState;
-    protected static readonly Dictionary<T, StateFlags> stateFlagsMap = null;
 
     // Interface
     [SerializeField] protected bool hasGun;
@@ -28,6 +27,7 @@ public abstract class CharacterBehaviour<T> : CursedBehaviour, IDamageable, IEye
 
     /* Required methods */
 
+    protected virtual Dictionary<T, StateFlags> stateFlagsMap { get; } = null;
     protected abstract T DefaultState();
     public abstract bool ShouldJump();
     public abstract float GetWalkSpeed();
