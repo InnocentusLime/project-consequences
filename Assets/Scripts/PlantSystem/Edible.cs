@@ -1,7 +1,6 @@
 using UnityEngine;
 
-public enum FoodType
-{
+public enum FoodType {
     Harmless,
     Poisonous
 }

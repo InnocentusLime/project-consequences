@@ -1,8 +1,7 @@
 using UnityEngine;
 using UnityEngine.Events;
 
-public enum DamageType
-{
+public enum DamageType {
     BulletHit,
     DecayDamage,
     FoodPoison,
