@@ -1,4 +1,4 @@
-#define CHARACTER_BEHAVIOUR_DEBUG_STATE_TRANSITIONS
+// #define CHARACTER_BEHAVIOUR_DEBUG_STATE_TRANSITIONS
 
 using System;
 using System.Collections.Generic;
