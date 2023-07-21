@@ -55,6 +55,10 @@ public class CharacterPhysics : MonoBehaviour {
         contactFilter.SetLayerMask(collisionMask);
     }
 
+    private void OnEnable() {
+        rb.isKinematic = true;
+    }
+
     public void Reset() {
         ticksOffGround = 0;
         ticksSinceLastJump = 0;

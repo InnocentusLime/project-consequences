@@ -90,6 +90,10 @@ public class PlayerBehaviour : CharacterBehaviour<PlayerState> {
         if (Input.GetKeyDown(KeyCode.E)) {
             interaction.Interact();
         }
+
+        if (Input.GetKeyDown(KeyCode.Q)) {
+            SetState(PlayerState.Dead);
+        }
     }
 
     private float ShootingAngle() {

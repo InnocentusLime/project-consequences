@@ -1,5 +1,6 @@
+#define CHARACTER_BEHAVIOUR_DEBUG_STATE_TRANSITIONS
+
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -27,7 +28,7 @@ public abstract class CharacterBehaviour<T> : CursedBehaviour, IDamageable, IEye
 
     /* Required methods */
 
-    protected virtual Dictionary<T, StateFlags> stateFlagsMap { get; } = null;
+    protected virtual Dictionary<T, StateFlags> stateFlagsMap => null;
     protected abstract T DefaultState();
     public abstract bool ShouldJump();
     public abstract float GetWalkSpeed();
@@ -49,8 +50,7 @@ public abstract class CharacterBehaviour<T> : CursedBehaviour, IDamageable, IEye
         gun = GetComponent<Gun>();
         physics = GetComponent<CharacterPhysics>();
 
-        currentState = DefaultState();
-        ApplyFlags(stateFlagsMap[currentState]);
+        SetStateInner(DefaultState());
     }
 
     protected void SetState(T newState) {
@@ -58,13 +58,23 @@ public abstract class CharacterBehaviour<T> : CursedBehaviour, IDamageable, IEye
             return;
         }
 
-        currentState = newState;
-        ApplyFlags(stateFlagsMap[currentState]);
+        SetStateInner(newState);
     }
 
     protected bool Shoot(float angle) => hasGun && gun.Shoot(angle);
 
     /* Private API */
+
+    private void SetStateInner(T newState) {
+#if CHARACTER_BEHAVIOUR_DEBUG_STATE_TRANSITIONS
+        Debug.Log(this.GetType().Name + ": " +
+            currentState + " -> " + newState + "\nnew flags:\n" +
+            JsonUtility.ToJson(stateFlagsMap[newState], true));
+#endif
+
+        currentState = newState;
+        ApplyFlags(stateFlagsMap[currentState]);
+    }
 
     private void ApplyFlags(StateFlags flags) {
         // Gun
