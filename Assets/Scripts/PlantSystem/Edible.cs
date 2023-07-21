@@ -5,8 +5,6 @@ public enum FoodType {
     Poisonous
 }
 
-public interface IEdible {
+public interface IEdible: IDamageable {
     public FoodType GetFoodType();
-
-    public void GetEaten(DamageType damageType);
 }

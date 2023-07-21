@@ -23,7 +23,7 @@ public class Venus : CursedBehaviour {
             return;
         }
 
-        edible.GetEaten(DamageType.VenusEat);
+        edible.Damage(DamageType.VenusEat);
         switch (edible.GetFoodType()) {
             case FoodType.Harmless:
                 break;
