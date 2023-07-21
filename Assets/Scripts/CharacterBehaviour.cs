@@ -12,7 +12,8 @@ public struct StateFlags {
 }
 
 [RequireComponent(typeof(Eyesight), typeof(CharacterPhysics))]
-public abstract class CharacterBehaviour<T> : CursedBehaviour, IDamageable, IEyesightClient {
+public abstract class CharacterBehaviour<T> : CursedBehaviour, IDamageable, IEyesightClient,
+    ICharacterPhysicsController {
     // Components
     private Gun gun;
     private CharacterPhysics physics;
@@ -28,11 +29,17 @@ public abstract class CharacterBehaviour<T> : CursedBehaviour, IDamageable, IEye
     /* Required methods */
 
     protected abstract T DefaultState();
+    public abstract bool ShouldJump();
+    public abstract float GetWalkSpeed();
+    public abstract float GetJumpSpeed();
 
     /* Event handlers */
 
     public abstract void Damage(DamageType damageType);
     public abstract void OnSeenObject(GameObject obj);
+    public abstract bool OnWalk(WalkType walkType);
+    public abstract void OnSuccessfulJump();
+    public abstract void OnLand(Vector2 groundNormal, int offGroundTicks);
 
     /* Child API */
 

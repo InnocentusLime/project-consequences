@@ -5,6 +5,24 @@
 using System;
 using UnityEngine;
 
+public enum WalkType {
+    Unchanged,
+    ChangeDirection,
+    Fail,
+}
+
+public interface ICharacterPhysicsController {
+    /* Controlling methods */
+    public bool ShouldJump();
+    public float GetWalkSpeed();
+    public float GetJumpSpeed();
+
+    /* Physics callbacks */
+    public bool OnWalk(WalkType walkType);
+    public void OnSuccessfulJump();
+    public void OnLand(Vector2 groundNormal, int offGroundTicks);
+}
+
 [RequireComponent(typeof(Rigidbody2D))]
 public class CharacterPhysics : MonoBehaviour {
     private const float minMoveDistance = 0.001f;
@@ -21,19 +39,18 @@ public class CharacterPhysics : MonoBehaviour {
     // Object state. Reset when needed
     private int ticksOffGround;
     private int ticksSinceLastJump;
-    private bool jumpQueued;
-    private float targetJumpSpeed;
     private Vector2 velocity;
-    private float targetWalkSpeed;
     private Vector2 groundNormal;
 
     // Buffers and caches. Do not touch.
     private Rigidbody2D rb;
+    private ICharacterPhysicsController controller;
     private ContactFilter2D contactFilter;
     private readonly RaycastHit2D[] hitBuffer = new RaycastHit2D[16];
 
     private void Awake() {
         rb = GetComponent<Rigidbody2D>();
+        controller = GetComponent<ICharacterPhysicsController>();
 
         contactFilter.SetLayerMask(collisionMask);
     }
@@ -42,39 +59,28 @@ public class CharacterPhysics : MonoBehaviour {
         ticksOffGround = 0;
         ticksSinceLastJump = 0;
         groundNormal = Vector2.up;
-        targetJumpSpeed = 0f;
-        targetWalkSpeed = 0f;
-        jumpQueued = false;
         velocity = Vector2.zero;
     }
 
-    public void MoveHorizontally(float hSpeed) {
-        targetWalkSpeed = hSpeed;
-    }
-
-    // TODO coyote time?
-    public void Jump(float jumpSpeed) {
-        if (!IsOnGround()) {
-            return;
-        }
-
-        jumpQueued = true;
-        targetJumpSpeed = jumpSpeed;
-    }
-
     private void FixedUpdate() {
+        bool isGrounded = IsOnGround();
+        int oldTicksOffGround = ticksOffGround;
         Vector2 alongGround = -Vector2.Perpendicular(groundNormal);
 
         ticksOffGround = Math.Min(ticksOffGround + 1, 100);
         groundNormal = Vector2.up;
 
-        ProcessInstantSpeed(alongGround * targetWalkSpeed);
-        ProcessJump();
+        ProcessWalking(alongGround * controller.GetWalkSpeed());
+        ProcessJump(isGrounded);
 
         ProcessPersistentSpeed();
 
         if (doGroundSnapping) {
             GroundSnapping();
+        }
+
+        if (!isGrounded && IsOnGround()) {
+            controller.OnLand(groundNormal, oldTicksOffGround);
         }
 
 #if DEBUG_CHARACTER_PHYSICS_NORMALS
@@ -84,31 +90,41 @@ public class CharacterPhysics : MonoBehaviour {
 #endif
     }
 
-    private void ProcessInstantSpeed(Vector2 instantSpeed) {
-        float walkSpeedIncrement = instantSpeed.magnitude / instantSpeedIterCount;
-        Vector2 instantMoveDirection = instantSpeed.normalized;
+    /* Physics simulation steps */
 
+    private void ProcessWalking(Vector2 walkSpeed) {
+        float walkSpeedIncrement = walkSpeed.magnitude / instantSpeedIterCount;
+        Vector2 adjustedWalkSpeed = walkSpeed.normalized * walkSpeedIncrement;
         for (int i = 0; i < instantSpeedIterCount; ++i) {
-            Vector2 moveSpeed = walkSpeedIncrement * instantMoveDirection;
-            Vector2 adjustedMoveSpeed = Move(moveSpeed, true, false);
-
-            if (adjustedMoveSpeed.magnitude * Time.fixedDeltaTime < minMoveDistance) {
+            if (adjustedWalkSpeed.magnitude * Time.fixedDeltaTime < minMoveDistance) {
+                controller.OnWalk(WalkType.Fail);
                 break;
             }
 
-            instantMoveDirection = adjustedMoveSpeed.normalized;
+            Vector2 speed = walkSpeedIncrement * adjustedWalkSpeed.normalized;
+            adjustedWalkSpeed = Move(speed, true, false);
+
+            float absDor = Mathf.Abs(Vector2.Dot(
+                speed.normalized,
+                adjustedWalkSpeed.normalized
+            ));
+            bool keepMoving = controller.OnWalk(
+                absDor >= 0.0001f ? WalkType.ChangeDirection : WalkType.Unchanged);
+
+            if (!keepMoving) {
+                break;
+            }
         }
     }
 
-    private void ProcessJump() {
+    private void ProcessJump(bool isGrounded) {
         ticksSinceLastJump = Math.Min(ticksSinceLastJump + 1, 10);
-        if (!jumpQueued) {
+        if (!isGrounded || !controller.ShouldJump()) {
             return;
         }
 
-        velocity.y = targetJumpSpeed;
-        jumpQueued = false;
-        targetJumpSpeed = 0f;
+        controller.OnSuccessfulJump();
+        velocity.y = controller.GetJumpSpeed();
         ticksSinceLastJump = 0;
     }
 
@@ -131,6 +147,10 @@ public class CharacterPhysics : MonoBehaviour {
         SetGroundNormal(hit.normal);
         Move(hit.normal * -8f, false, false);
     }
+
+    public bool IsOnGround() => ticksOffGround == 0;
+
+    /* Private API */
 
     // TODO this doesn't work well when infinite friction is disabled. I should fix that later
     private Vector2 Move(Vector2 moveVelocity, bool doGroundCheck, bool infiniteGroundFriction) {
@@ -170,10 +190,6 @@ public class CharacterPhysics : MonoBehaviour {
 #endif
         }
 
-        // if (distance < minMoveDistance) {
-        //     return moveVelocity;
-        // }
-
         deltaPosition = deltaPosition.normalized * distance;
         rb.position += deltaPosition;
 
@@ -184,8 +200,6 @@ public class CharacterPhysics : MonoBehaviour {
 
         return moveVelocity;
     }
-
-    public bool IsOnGround() => ticksOffGround == 0;
 
     private bool IsGroundNormal(Vector2 normal) => normal.y > minGroundNormalY;
 
