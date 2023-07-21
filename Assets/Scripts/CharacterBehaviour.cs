@@ -37,9 +37,9 @@ public abstract class CharacterBehaviour<T> : CursedBehaviour, IDamageable, IEye
 
     public abstract void Damage(DamageType damageType);
     public abstract void OnSeenObject(GameObject obj);
-    public abstract bool OnWalk(WalkType walkType);
+    public abstract void OnWalk(WalkType walkType);
     public abstract void OnSuccessfulJump();
-    public abstract void OnLand(Vector2 groundNormal, int offGroundTicks);
+    public abstract void OnGroundChange(Vector2 groundNormal, int offGroundTicks);
 
     /* Child API */
 

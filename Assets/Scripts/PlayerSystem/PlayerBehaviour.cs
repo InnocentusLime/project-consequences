@@ -55,22 +55,11 @@ public class PlayerBehaviour : CharacterBehaviour<PlayerState> {
 
     public override float GetJumpSpeed() => jumpTakeoffSpeed;
 
-    public override bool OnWalk(WalkType walkType) {
-        switch (walkType) {
-            case WalkType.ChangeDirection:
-                Debug.Log("Change direction");
-                break;
-            case WalkType.Fail:
-                Debug.Log("Failed to move");
-                break;
-        }
-
-        return true;
-    }
+    public override void OnWalk(WalkType walkType) {}
 
     public override void OnSuccessfulJump() {}
 
-    public override void OnLand(Vector2 groundNormal, int offGroundTicks) {}
+    public override void OnGroundChange(Vector2 groundNormal, int offGroundTicks) {}
 
     public override void Damage(DamageType damageType) {
         SetState(PlayerState.Dead);

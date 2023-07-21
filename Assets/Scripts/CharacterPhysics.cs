@@ -1,4 +1,4 @@
-﻿// #define DEBUG_CHARACTER_PHYSICS_NORMALS
+﻿#define DEBUG_CHARACTER_PHYSICS_NORMALS
 // #define DEBUG_CHARACTER_PHYSICS_DELTA_POS
 // #define DEBUG_CHARACTER_PHYSICS_BREAK_ON_PENETRATION
 
@@ -6,8 +6,7 @@ using System;
 using UnityEngine;
 
 public enum WalkType {
-    Unchanged,
-    ChangeDirection,
+    Success,
     Fail,
 }
 
@@ -18,9 +17,9 @@ public interface ICharacterPhysicsController {
     public float GetJumpSpeed();
 
     /* Physics callbacks */
-    public bool OnWalk(WalkType walkType);
+    public void OnWalk(WalkType walkType);
     public void OnSuccessfulJump();
-    public void OnLand(Vector2 groundNormal, int offGroundTicks);
+    public void OnGroundChange(Vector2 groundNormal, int offGroundTicks);
 }
 
 [RequireComponent(typeof(Rigidbody2D))]
@@ -41,6 +40,7 @@ public class CharacterPhysics : MonoBehaviour {
     private int ticksSinceLastJump;
     private Vector2 velocity;
     private Vector2 groundNormal;
+    private Vector2 oldGroundNormal;
 
     // Buffers and caches. Do not touch.
     private Rigidbody2D rb;
@@ -65,6 +65,7 @@ public class CharacterPhysics : MonoBehaviour {
     private void FixedUpdate() {
         bool isGrounded = IsOnGround();
         int oldTicksOffGround = ticksOffGround;
+        oldGroundNormal = groundNormal;
         Vector2 alongGround = -Vector2.Perpendicular(groundNormal);
 
         ticksOffGround = Math.Min(ticksOffGround + 1, 100);
@@ -79,10 +80,6 @@ public class CharacterPhysics : MonoBehaviour {
             GroundSnapping();
         }
 
-        if (!isGrounded && IsOnGround()) {
-            controller.OnLand(groundNormal, oldTicksOffGround);
-        }
-
 #if DEBUG_CHARACTER_PHYSICS_NORMALS
         Vector2 pos = rb.position;
         Color normalCol = IsOnGround() ? Color.green : Color.red;
@@ -95,6 +92,12 @@ public class CharacterPhysics : MonoBehaviour {
     private void ProcessWalking(Vector2 walkSpeed) {
         float walkSpeedIncrement = walkSpeed.magnitude / instantSpeedIterCount;
         Vector2 adjustedWalkSpeed = walkSpeed.normalized * walkSpeedIncrement;
+
+        // TO avoid messaging the controller that we "failed to move"
+        if (walkSpeedIncrement < 0.0001) {
+            return;
+        }
+
         for (int i = 0; i < instantSpeedIterCount; ++i) {
             if (adjustedWalkSpeed.magnitude * Time.fixedDeltaTime < minMoveDistance) {
                 controller.OnWalk(WalkType.Fail);
@@ -103,17 +106,6 @@ public class CharacterPhysics : MonoBehaviour {
 
             Vector2 speed = walkSpeedIncrement * adjustedWalkSpeed.normalized;
             adjustedWalkSpeed = Move(speed, true, false);
-
-            float absDor = Mathf.Abs(Vector2.Dot(
-                speed.normalized,
-                adjustedWalkSpeed.normalized
-            ));
-            bool keepMoving = controller.OnWalk(
-                absDor >= 0.0001f ? WalkType.ChangeDirection : WalkType.Unchanged);
-
-            if (!keepMoving) {
-                break;
-            }
         }
     }
 
@@ -204,7 +196,10 @@ public class CharacterPhysics : MonoBehaviour {
     private bool IsGroundNormal(Vector2 normal) => normal.y > minGroundNormalY;
 
     private void SetGroundNormal(Vector2 normal) {
+        controller.OnGroundChange(normal, ticksOffGround);
+
         ticksOffGround = 0;
+        oldGroundNormal = groundNormal;
         groundNormal = normal;
     }
 }
