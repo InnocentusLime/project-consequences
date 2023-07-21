@@ -5,14 +5,14 @@ using UnityEngine;
 
 public class Venus : CursedBehaviour {
     private IDamageable damageable;
-    private EyeSight eyesight;
+    private Eyesight eyesight;
     public GameObject display;
 
     protected override void Awake() {
         base.Awake();
 
         damageable = GetComponent<IDamageable>();
-        eyesight = GetComponent<EyeSight>();
+        eyesight = GetComponent<Eyesight>();
         display.SetActive(false);
 
         eyesight.enabled = false;

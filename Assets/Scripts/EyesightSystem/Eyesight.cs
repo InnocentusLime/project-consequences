@@ -15,7 +15,7 @@ public interface IEyesightClient {
     public LayerMask GetReportMask();
 }
 
-public class EyeSight : MonoBehaviour {
+public class Eyesight : MonoBehaviour {
     public Vector2 sightDirection;
     public Vector2 rayOffset;
 

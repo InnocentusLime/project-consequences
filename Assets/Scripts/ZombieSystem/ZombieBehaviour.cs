@@ -7,7 +7,7 @@ public class ZombieBehaviour : CursedBehaviour {
     private IDamageable damageable;
 
     public Vector2 movingDirection;
-    private EyeSight eyeSight;
+    private Eyesight eyesight;
 
     public float moveSpeed;
     public float angryMul;
@@ -25,8 +25,8 @@ public class ZombieBehaviour : CursedBehaviour {
 
         damageable = GetComponent<IDamageable>();
         rigidBody2D = GetComponent<Rigidbody2D>();
-        eyeSight = GetComponent<EyeSight>();
-        movingDirection = eyeSight.sightDirection;
+        eyesight = GetComponent<Eyesight>();
+        movingDirection = eyesight.sightDirection;
     }
 
     // Update is called once per frame
@@ -54,8 +54,8 @@ public class ZombieBehaviour : CursedBehaviour {
 
         if (hitGround.collider != null) {
             movingDirection = -movingDirection;
-            eyeSight.sightDirection = movingDirection;
-            eyeSight.rayOffset = -eyeSight.rayOffset;
+            eyesight.sightDirection = movingDirection;
+            eyesight.rayOffset = -eyesight.rayOffset;
         }
 
 
@@ -64,10 +64,10 @@ public class ZombieBehaviour : CursedBehaviour {
                 new Vector2(Mathf.Sign(GlobalRoomState.player.transform.position.x - transform.position.x),
                               movingDirection.y);
 
-            eyeSight.sightDirection = movingDirection;
+            eyesight.sightDirection = movingDirection;
 
-            if (Mathf.Sign(eyeSight.sightDirection.x) != Mathf.Sign(eyeSight.rayOffset.x)) {
-                eyeSight.rayOffset = -eyeSight.rayOffset;
+            if (Mathf.Sign(eyesight.sightDirection.x) != Mathf.Sign(eyesight.rayOffset.x)) {
+                eyesight.rayOffset = -eyesight.rayOffset;
             }
         }
 
@@ -77,7 +77,7 @@ public class ZombieBehaviour : CursedBehaviour {
     public void OnBulletHit(GameObject bullet) {
         isDead = true;
         wasSeen = false;
-        eyeSight.enabled = !eyeSight.enabled;
+        eyesight.enabled = !eyesight.enabled;
         GetComponent<SpriteRenderer>().color = new Color(0f, 0f, 0f);
     }
 

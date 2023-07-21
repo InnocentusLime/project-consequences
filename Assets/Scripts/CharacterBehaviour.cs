@@ -11,7 +11,7 @@ public struct StateFlags {
     public bool physics;
 }
 
-[RequireComponent(typeof(EyeSight), typeof(CharacterPhysics))]
+[RequireComponent(typeof(Eyesight), typeof(CharacterPhysics))]
 public abstract class CharacterBehaviour<T> : CursedBehaviour, IDamageable, IEyesightClient {
     // Components
     private Gun gun;
