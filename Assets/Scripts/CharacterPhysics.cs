@@ -22,6 +22,7 @@ public interface ICharacterPhysicsController {
     public void OnGroundChange(Vector2 groundNormal, int offGroundTicks);
 }
 
+// FIXME misbehaves on steep slopes. This might be the fix: https://defold.com/manuals/physics-resolving-collisions/
 [RequireComponent(typeof(Rigidbody2D))]
 public class CharacterPhysics : MonoBehaviour {
     private const float minMoveDistance = 0.001f;
