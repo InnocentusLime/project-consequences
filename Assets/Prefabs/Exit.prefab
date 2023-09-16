@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 690397042615205076}
   - component: {fileID: 690397042615205079}
-  - component: {fileID: 690397042615205078}
   - component: {fileID: 690397042615205073}
   - component: {fileID: 690397042615205072}
   m_Layer: 7
@@ -87,33 +86,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &690397042615205078
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 690397042615205075}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2f3323157e9c75d44a2fc8f649c86d0f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  interactionEvent:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 690397042615205073}
-        m_TargetAssemblyTypeName: RoomExitDoor, Assembly-CSharp
-        m_MethodName: OnInteract
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
 --- !u!114 &690397042615205073
 MonoBehaviour:
   m_ObjectHideFlags: 0

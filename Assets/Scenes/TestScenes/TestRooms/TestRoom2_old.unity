@@ -816,7 +816,8 @@ PrefabInstance:
       propertyPath: m_Name
       value: Magic Sphere 1
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 5201008222894482373, guid: 9fcf50cbdd05f854eb37a5f22e9f2ca2, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 9fcf50cbdd05f854eb37a5f22e9f2ca2, type: 3}
 --- !u!4 &239508295 stripped
 Transform:
@@ -2040,7 +2041,8 @@ PrefabInstance:
       propertyPath: m_Name
       value: Magic Sphere 2
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 5201008222894482373, guid: 9fcf50cbdd05f854eb37a5f22e9f2ca2, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 9fcf50cbdd05f854eb37a5f22e9f2ca2, type: 3}
 --- !u!4 &1416871682 stripped
 Transform:
