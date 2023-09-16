@@ -10,8 +10,11 @@ GameObject:
   m_Component:
   - component: {fileID: 9087682404277749878}
   - component: {fileID: 5428466586502281318}
-  - component: {fileID: 8246311911640180350}
   - component: {fileID: 7209457824750071207}
+  - component: {fileID: 8178892068196180823}
+  - component: {fileID: 6518919059184298559}
+  - component: {fileID: 132573864230758668}
+  - component: {fileID: 5131871779677449531}
   m_Layer: 0
   m_Name: Shadow
   m_TagString: Untagged
@@ -86,21 +89,6 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &8246311911640180350
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7576187586050676251}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8111c2717a719094c9ad8e6f9b4d18bd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  shootAngle: 0
-  visionLength: 8
-  scanRange: 10
 --- !u!114 &7209457824750071207
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -113,6 +101,76 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8584c2c4d28d7fdbb9738fbc92f39cef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hasGun: 1
   cooldownDuration: 0
   bulletPrefab: {fileID: 7743019789705946960, guid: 9d75a7b26f543284b80fdab13f5d9fb9, type: 3}
+--- !u!114 &8178892068196180823
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7576187586050676251}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 76b130590ece5d84ba14e490a37c6175, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sightDirection: {x: 0, y: 0}
+  rayOffset: {x: 0, y: 0}
+  rayLength: 3
+  sightAngle: 10
+  sightAngleStep: 1
+--- !u!50 &6518919059184298559
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7576187586050676251}
+  m_BodyType: 0
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
+--- !u!114 &132573864230758668
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7576187586050676251}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bdc36eda0f4a416596622111fdcce3c4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  doGroundSnapping: 1
+  gravityModifier: 1
+  collisionMask:
+    serializedVersion: 2
+    m_Bits: 0
+  minGroundNormalY: 0.65
+  persistentSpeedFriction: 1
+--- !u!114 &5131871779677449531
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7576187586050676251}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8111c2717a719094c9ad8e6f9b4d18bd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hasWeapon: 0
+  shootAngle: 0
