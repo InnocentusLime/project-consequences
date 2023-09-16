@@ -15,7 +15,7 @@ public class PlayerShootEvent : UnityEvent<Vector2, Vector2> {
 
 }
 
-[RequireComponent(typeof(PlayerInteraction))]
+[RequireComponent(typeof(Interaction))]
 public class PlayerBehaviour : CharacterBehaviour<PlayerState>, IEdible {
     private static readonly Dictionary<PlayerState, StateFlags> stateFlagsMapImpl = new(){
         { PlayerState.Normal , new StateFlags {
@@ -40,7 +40,7 @@ public class PlayerBehaviour : CharacterBehaviour<PlayerState>, IEdible {
 
     protected override Dictionary<PlayerState, StateFlags> stateFlagsMap => stateFlagsMapImpl;
 
-    private PlayerInteraction interaction;
+    private Interaction interaction;
     private Camera mainCamera;
 
     [SerializeField] private float horizontalSpeed;
@@ -64,7 +64,7 @@ public class PlayerBehaviour : CharacterBehaviour<PlayerState>, IEdible {
     protected override void Awake() {
         base.Awake();
 
-        interaction = GetComponent<PlayerInteraction>();
+        interaction = GetComponent<Interaction>();
 
         mainCamera = Camera.main;
         Assert.IsNotNull(mainCamera);

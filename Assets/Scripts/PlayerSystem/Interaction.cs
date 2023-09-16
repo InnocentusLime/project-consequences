@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class PlayerInteraction : MonoBehaviour {
+public class Interaction : MonoBehaviour {
     private readonly Collider2D[] collisionBuffer = new Collider2D[3];
     private ContactFilter2D interactableLayerFilter;
 
