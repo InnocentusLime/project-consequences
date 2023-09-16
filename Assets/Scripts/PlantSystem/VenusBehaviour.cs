@@ -11,7 +11,7 @@ public enum VenusState {
 }
 
 [RequireComponent(typeof(VenusNom))]
-public class Venus : CharacterBehaviour<VenusState> {
+public class VenusBehaviour : CharacterBehaviour<VenusState> {
     private static readonly Dictionary<VenusState, StateFlags> stateFlagsMapImpl = new(){
         { VenusState.Dormant , new StateFlags {
             attack = false,
