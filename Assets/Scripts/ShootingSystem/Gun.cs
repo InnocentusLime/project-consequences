@@ -24,8 +24,11 @@ public class Gun : MonoBehaviour, IWeapon {
             StartCoroutine(CooldownRoutine(cooldownDuration));
         }
 
-        Bullet bullet = Instantiate(bulletPrefab, transform.position,
-            Quaternion.AngleAxis(shootingAngle, Vector3.forward));
+        Bullet bullet = Instantiate(
+            bulletPrefab,
+            transform.position,
+            Quaternion.AngleAxis(shootingAngle - 90, Vector3.forward)
+        );
         bullet.creator = gameObject;
 
         return true;
