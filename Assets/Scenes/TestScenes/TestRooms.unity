@@ -314,7 +314,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c8dd8786cbb650a468b982192c4564ec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  shadowPrefab: {fileID: 5131871779677449531, guid: c9565aaab078fdc46a8f2698c8f107e8, type: 3}
+  shadowPrefab: {fileID: 5131871779677449531, guid: c9565aaab078fdc46a8f2698c8f107e8,
+    type: 3}
 --- !u!114 &5152680660164442776
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -358,7 +359,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cooldownDuration: 0.8
-  bulletPrefab: {fileID: 7743019789705946960, guid: 9d75a7b26f543284b80fdab13f5d9fb9, type: 3}
+  bulletPrefab: {fileID: 7743019789705946960, guid: 9d75a7b26f543284b80fdab13f5d9fb9,
+    type: 3}
 --- !u!1 &6626832514031195267
 GameObject:
   m_ObjectHideFlags: 0
@@ -424,7 +426,8 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
+  m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6,
+    type: 3}
   m_Color: {r: 1, g: 0, b: 0, a: 1}
   m_FlipX: 0
   m_FlipY: 0
