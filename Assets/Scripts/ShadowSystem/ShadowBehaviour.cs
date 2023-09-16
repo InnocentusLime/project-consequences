@@ -9,6 +9,7 @@ public enum ShadowState {
     Ascended,
 }
 
+// TODO give shotgun
 [RequireComponent(typeof(Gun))]
 public class ShadowBehaviour : CharacterBehaviour<ShadowState> {
     private static readonly Dictionary<ShadowState, StateFlags> stateFlagsMapImpl = new(){

@@ -16,9 +16,6 @@ public class Gun : MonoBehaviour, IWeapon {
             return false;
         }
 
-        // FIXME this ugliness exists only because the shotgun of the shadow
-        // is implemented as many calls to `Shoot()`. Fix it simply by making the
-        // shotgun shot its own object.
         if (!cooldownDuration.Equals(0.0f)) {
             isCoolingDown = true;
             StartCoroutine(CooldownRoutine(cooldownDuration));
