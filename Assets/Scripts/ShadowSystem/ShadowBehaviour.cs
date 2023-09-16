@@ -11,8 +11,6 @@ public enum ShadowState {
 
 [RequireComponent(typeof(Gun))]
 public class ShadowBehaviour : CharacterBehaviour<ShadowState> {
-    public float shootAngle;
-
     private static readonly Dictionary<ShadowState, StateFlags> stateFlagsMapImpl = new(){
         { ShadowState.Dormant , new StateFlags {
             attack = false,
