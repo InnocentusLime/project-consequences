@@ -12,9 +12,10 @@ GameObject:
   - component: {fileID: 2141171464906668065}
   - component: {fileID: 2141171464906668070}
   - component: {fileID: 2141171464906668071}
-  - component: {fileID: 2141171464906668064}
-  - component: {fileID: 2141171464906668067}
   - component: {fileID: 7033961169730457985}
+  - component: {fileID: 69685420947333786}
+  - component: {fileID: 6891870216600701367}
+  - component: {fileID: 3479023847193599356}
   m_Layer: 9
   m_Name: Zombie
   m_TagString: Untagged
@@ -136,48 +137,6 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
---- !u!114 &2141171464906668064
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2141171464906668069}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ed767bf273a2af8419669fedd9d3ba7a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  movingDirection: {x: 0, y: 0}
-  moveSpeed: 1
-  angryMul: 3
---- !u!114 &2141171464906668067
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2141171464906668069}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8288a64f2b9c229488c4f72a1e1f45e0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  bulletHitEvent:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 2141171464906668064}
-        m_TargetAssemblyTypeName: ZombieBehaviour, Assembly-CSharp
-        m_MethodName: OnBulletHit
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
 --- !u!114 &7033961169730457985
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -190,29 +149,52 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 76b130590ece5d84ba14e490a37c6175, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sightDirection: {x: 1, y: 0}
   rayOffset: {x: 0.6, y: 0}
   rayLength: 2
   sightAngle: 20
   sightAngleStep: 4
-  sightMask:
+--- !u!114 &69685420947333786
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2141171464906668069}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e91831818d9746b6a22a4b8c7f7bf246, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &6891870216600701367
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2141171464906668069}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bdc36eda0f4a416596622111fdcce3c4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  doGroundSnapping: 1
+  gravityModifier: 1
+  collisionMask:
     serializedVersion: 2
-    m_Bits: 1088
-  reportMask:
-    serializedVersion: 2
-    m_Bits: 1024
-  objectFoundEvent:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: ZombieBehaviour, Assembly-CSharp
-        m_MethodName: OnSeeingObject
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+    m_Bits: 0
+  minGroundNormalY: 0.65
+  persistentSpeedFriction: 1
+--- !u!114 &3479023847193599356
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2141171464906668069}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ed767bf273a2af8419669fedd9d3ba7a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hasWeapon: 0
+  isWalkingLeft: 0
