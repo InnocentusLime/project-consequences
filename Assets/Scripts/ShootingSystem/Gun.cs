@@ -5,13 +5,13 @@ using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.Events;
 
-public class Gun : MonoBehaviour {
+public class Gun : MonoBehaviour, IWeapon {
     public float cooldownDuration = 0.8f;
     public Bullet bulletPrefab;
 
     private bool isCoolingDown;
 
-    public bool Shoot(float shootingAngle) {
+    public bool Attack(float shootingAngle) {
         if (!CanShoot()) {
             return false;
         }

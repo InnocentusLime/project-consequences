@@ -11,27 +11,27 @@ public enum PlayerState {
 }
 
 [Serializable]
-public class PlayerShootEvent : UnityEvent<float, Vector2> {
+public class PlayerShootEvent : UnityEvent<Vector2, Vector2> {
 
 }
 
 [RequireComponent(typeof(PlayerInteraction))]
-public class PlayerBehaviour : CharacterBehaviour<PlayerState> {
+public class PlayerBehaviour : CharacterBehaviour<PlayerState>, IEdible {
     private static readonly Dictionary<PlayerState, StateFlags> stateFlagsMapImpl = new(){
         { PlayerState.Normal , new StateFlags {
-            gun = true,
+            attack = true,
             sightMask = 0,
             reportMask = 0,
             physics = true,
         }},
         { PlayerState.Haunted , new StateFlags {
-            gun = false,
+            attack = false,
             sightMask = 0,
             reportMask = 0,
             physics = true,
         }},
         { PlayerState.Dead , new StateFlags {
-            gun = false,
+            attack = false,
             sightMask = 0,
             reportMask = 0,
             physics = false,
@@ -55,19 +55,11 @@ public class PlayerBehaviour : CharacterBehaviour<PlayerState> {
 
     public override float GetJumpSpeed() => jumpTakeoffSpeed;
 
-    public override void OnWalk(WalkType walkType) {}
-
-    public override void OnSuccessfulJump() {}
-
-    public override void OnGroundChange(Vector2 groundNormal, int offGroundTicks) {}
-
     public override void Damage(DamageType damageType) {
         SetState(PlayerState.Dead);
     }
 
-    public override void OnSeenObject(GameObject obj) {
-        throw new NotImplementedException();
-    }
+    public FoodType GetFoodType() => FoodType.Harmless;
 
     protected override void Awake() {
         base.Awake();
@@ -79,12 +71,14 @@ public class PlayerBehaviour : CharacterBehaviour<PlayerState> {
     }
 
     private void Update() {
-        float shootingAngle = ShootingAngle();
+        Vector2 mousePosition = mainCamera.ScreenToWorldPoint(Input.mousePosition);
+        Vector2 lookDirection = mousePosition - (Vector2)transform.position;
+        LookInDirection(lookDirection);
 
         if (Input.GetMouseButtonDown(0)) {
-            // if (gun.Shoot(shootingAngle)) {
-            //     playerShootEvent.Invoke(shootingAngle, transform.position);
-            // }
+            if (Attack()) {
+                playerShootEvent.Invoke(lookDirection, transform.position);
+            }
         }
 
         if (Input.GetKeyDown(KeyCode.E)) {
@@ -96,17 +90,7 @@ public class PlayerBehaviour : CharacterBehaviour<PlayerState> {
         }
     }
 
-    private float ShootingAngle() {
-        Vector2 mousePosition = mainCamera.ScreenToWorldPoint(Input.mousePosition);
-
-        return Vector2.SignedAngle(Vector2.up, mousePosition - (Vector2) transform.localPosition);
-    }
-
     protected override void OnConsequenceTime() {
         SetState(PlayerState.Haunted);
-    }
-
-    protected override void OnMadnessChange(int madnessLevel) {
-        throw new NotImplementedException();
     }
 }

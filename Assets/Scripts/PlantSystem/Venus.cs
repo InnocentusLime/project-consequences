@@ -1,46 +1,57 @@
 // TODO make breakable pod
 
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
-public class Venus : CursedBehaviour {
-    private IDamageable damageable;
-    private Eyesight eyesight;
-    public GameObject display;
+public enum VenusState {
+    Dormant,
+    Active,
+    Dead,
+}
 
-    protected override void Awake() {
-        base.Awake();
+[RequireComponent(typeof(VenusNom))]
+public class Venus : CharacterBehaviour<VenusState> {
+    private static readonly Dictionary<VenusState, StateFlags> stateFlagsMapImpl = new(){
+        { VenusState.Dormant , new StateFlags {
+            attack = false,
+            sightMask = 0,
+            reportMask = 0,
+            physics = false,
+        }},
+        { VenusState.Active, new StateFlags {
+            attack = true,
+            sightMask = (1 << 6) | (1 << 9) | (1 << 10), // Must be "Ground | Entity | Player"
+            reportMask = (1 << 9) | (1 << 10), // Must be "Entity | Player"
+            physics = false,
+        }},
+        { VenusState.Dead, new StateFlags {
+            attack = false,
+            sightMask = 0,
+            reportMask = 0,
+            physics = false,
+        }},
+    };
 
-        damageable = GetComponent<IDamageable>();
-        eyesight = GetComponent<Eyesight>();
-        display.SetActive(false);
+    protected override Dictionary<VenusState, StateFlags> stateFlagsMap => stateFlagsMapImpl;
 
-        eyesight.enabled = false;
-    }
+    [SerializeField] private GameObject display;
 
-    public void OnSeeingObject(GameObject objectToEat) {
-        if (!objectToEat.TryGetComponent(out IEdible edible)) {
-            return;
-        }
-
-        edible.Damage(DamageType.VenusEat);
-        switch (edible.GetFoodType()) {
-            case FoodType.Harmless:
-                break;
-            case FoodType.Poisonous:
-                damageable.Damage(DamageType.FoodPoison);
-                break;
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
+    private void Update() {
+        display.SetActive(currentState == VenusState.Active);
     }
 
     protected override void OnConsequenceTime() {
-        display.SetActive(true);
-        eyesight.enabled = true;
+        SetState(VenusState.Active);
     }
 
-    protected override void OnMadnessChange(int madnessLevel) {
-        throw new System.NotImplementedException();
+    protected override VenusState DefaultState() => VenusState.Dormant;
+
+    public override void Damage(DamageType damageType) {
+        SetState(VenusState.Dead);
+    }
+
+    public override void OnSeenObject(GameObject obj) {
+        Attack(obj);
     }
 }

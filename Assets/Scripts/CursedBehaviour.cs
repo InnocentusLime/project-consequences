@@ -16,5 +16,7 @@ public abstract class CursedBehaviour : MonoBehaviour {
 
     protected abstract void OnConsequenceTime();
 
-    protected abstract void OnMadnessChange(int madnessLevel);
+    protected virtual void OnMadnessChange(int madnessLevel) {
+        throw new NotImplementedException();
+    }
 }

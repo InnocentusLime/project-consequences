@@ -1,103 +1,126 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Serialization;
 
-public class ZombieBehaviour : CursedBehaviour {
-    private IDamageable damageable;
+public enum ZombieState {
+    Normal,
+    Resurrected,
+    Dead,
+    Angered,
+}
 
-    public Vector2 movingDirection;
-    private Eyesight eyesight;
+[RequireComponent(typeof(ZombieFist))]
+public class ZombieBehaviour : CharacterBehaviour<ZombieState>, IEdible {
+    private static readonly Dictionary<ZombieState, StateFlags> stateFlagsMapImpl = new(){
+        { ZombieState.Normal, new StateFlags {
+            attack = false,
+            sightMask = (1 << 6) | (1 << 10 ), // Must be "Ground | Player"
+            reportMask = 1 << 10, // Must be "Player"
+            physics = true,
+        }},
+        { ZombieState.Resurrected, new StateFlags {
+            attack = true,
+            sightMask = 0,
+            reportMask = 0,
+            physics = true,
+        }},
+        { ZombieState.Dead, new StateFlags {
+            attack = false,
+            sightMask = 0,
+            reportMask = 0,
+            //physics = false,  // makes sense, but prevents venus to eat a dead zombie
+            physics = true,
+        }},
+        { ZombieState.Angered, new StateFlags {
+            attack = true,
+            sightMask = 0,
+            reportMask = 0,
+            physics = true,
+        }},
+    };
 
-    public float moveSpeed;
-    public float angryMul;
+    protected override Dictionary<ZombieState, StateFlags> stateFlagsMap => stateFlagsMapImpl;
 
-    private bool wasSeen = false;
-    private bool isDead = false;
-    private Rigidbody2D rigidBody2D;
-
-    // Start is called before the first frame update
-    protected override void OnMadnessChange(int madnessLevel) {
-    }
+    [SerializeField] private bool isWalkingLeft = false;
+    private SpriteRenderer spriteRenderer;
 
     protected override void Awake() {
         base.Awake();
 
-        damageable = GetComponent<IDamageable>();
-        rigidBody2D = GetComponent<Rigidbody2D>();
-        eyesight = GetComponent<Eyesight>();
-        movingDirection = eyesight.sightDirection;
+        spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
-    // Update is called once per frame
-    void FixedUpdate() {
-        if (isDead) {
-            return;
-        }
-
-        RaycastHit2D hitGround = Physics2D.Raycast(transform.position,
-            new Vector2(rigidBody2D.velocity.x, 0),
-            distance: transform.localScale.x / 2 + 0.1f,
-            layerMask: LayerMask.GetMask("Ground"));
-
-
-        RaycastHit2D hitPlayer = Physics2D.Raycast(
-            transform.position +
-            new Vector3((transform.localScale.x / 2 + 0.5f) * Mathf.Sign(movingDirection.x), 0, 0),
-            new Vector2(rigidBody2D.velocity.x, 0),
-            distance: 0.1f,
-            layerMask: LayerMask.GetMask("Player"));
-
-        if (hitPlayer.collider != null && hitPlayer.collider.gameObject == GlobalRoomState.player) {
-            GlobalRoomState.player.GetComponent<IDamageable>().Damage(DamageType.ZombiePunch);
-        }
-
-        if (hitGround.collider != null) {
-            movingDirection = -movingDirection;
-            eyesight.sightDirection = movingDirection;
-            eyesight.rayOffset = -eyesight.rayOffset;
-        }
-
-
-        if (wasSeen) {
-            movingDirection =
-                new Vector2(Mathf.Sign(GlobalRoomState.player.transform.position.x - transform.position.x),
-                              movingDirection.y);
-
-            eyesight.sightDirection = movingDirection;
-
-            if (Mathf.Sign(eyesight.sightDirection.x) != Mathf.Sign(eyesight.rayOffset.x)) {
-                eyesight.rayOffset = -eyesight.rayOffset;
-            }
-        }
-
-        rigidBody2D.velocity = new Vector2(movingDirection.x * moveSpeed, movingDirection.y + rigidBody2D.velocity.y);
+    private void Update() {
+        spriteRenderer.color = currentState switch {
+            ZombieState.Normal => new Color(0f, 147.0f / 255, 27.0f / 255),
+            ZombieState.Resurrected => new Color(0f, 147.0f / 255, 27.0f / 255),
+            ZombieState.Dead => new Color(0f, 0f, 0f),
+            ZombieState.Angered => new Color(100.0f / 255, 147.0f / 255, 27.0f / 255),
+            _ => throw new ArgumentOutOfRangeException()
+        };
     }
 
-    public void OnBulletHit(GameObject bullet) {
-        isDead = true;
-        wasSeen = false;
-        eyesight.enabled = !eyesight.enabled;
-        GetComponent<SpriteRenderer>().color = new Color(0f, 0f, 0f);
-    }
-
-    public void OnSeeingObject(GameObject seeingObject) {
-        if (!wasSeen) {
-            wasSeen = true;
-            moveSpeed *= angryMul;
+    private void FixedUpdate() {
+        if (currentState == ZombieState.Angered) {
+            isWalkingLeft = (GlobalRoomState.player.transform.position - transform.position).x < 0f;
         }
 
-        GetComponent<SpriteRenderer>().color = new Color(100.0f / 255, 147.0f / 255, 27.0f / 255);
+        LookInDirection(Vector2.right * (isWalkingLeft ? -1f : 1f));
+        if (currentState is ZombieState.Angered or ZombieState.Resurrected) {
+            Attack();
+        }
     }
 
     protected override void OnConsequenceTime() {
-        if (!isDead) {
-            damageable.Damage(DamageType.DecayDamage);
-            return;
-        }
+        ZombieState newState = currentState switch {
+            ZombieState.Normal => ZombieState.Dead,
+            ZombieState.Resurrected => throw new ArgumentOutOfRangeException(),
+            ZombieState.Dead => ZombieState.Resurrected,
+            ZombieState.Angered => ZombieState.Dead,
+            _ => throw new ArgumentOutOfRangeException(),
+        };
 
-        isDead = false;
-        moveSpeed *= angryMul;
-        GetComponent<SpriteRenderer>().color = new Color(0f, 147.0f / 255, 27.0f / 255);
+        SetState(newState);
+    }
+
+    protected override ZombieState DefaultState() => ZombieState.Normal;
+
+    public override float GetWalkSpeed() => currentState switch {
+        ZombieState.Normal => 1f,
+        ZombieState.Resurrected => 8f,
+        ZombieState.Dead => 0f,
+        ZombieState.Angered => 3f,
+        _ => throw new ArgumentOutOfRangeException()
+    } * (isWalkingLeft ? -1f : 1f);
+
+    public override void OnWalk(WalkType walkType) {
+        switch (walkType) {
+            case WalkType.Success:
+                break;
+            case WalkType.Fail:
+                if (currentState != ZombieState.Angered) {
+                    isWalkingLeft = !isWalkingLeft;
+                }
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+    }
+
+    public override void Damage(DamageType damageType) {
+        SetState(ZombieState.Dead);
+
+        // TODO go to a different state
+        if (damageType == DamageType.VenusEat) {
+            Destroy(gameObject);
+        }
+    }
+
+    public FoodType GetFoodType() => FoodType.Poisonous;
+
+    public override void OnSeenObject(GameObject obj) {
+        SetState(ZombieState.Angered);
     }
 }

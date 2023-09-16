@@ -3,57 +3,78 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 [Serializable]
 public struct StateFlags {
-    public bool gun;
+    public bool attack;
     public LayerMask sightMask;
     public LayerMask reportMask;
-    public bool physics;
+    public bool physics; // NOTE: disabling physics disables the object from being visible
+}
+
+public interface IWeapon {
+    // Do an attack at angle `angle`.
+    // The return value indicates if the attack has been successful or not.
+    public bool Attack(float angle) => false;
+
+    // Do an attack right at `obj`.
+    // The return value indicates if the attack has been successful or not.
+    public bool Attack(GameObject obj) => false;
 }
 
 [RequireComponent(typeof(Eyesight), typeof(CharacterPhysics))]
 public abstract class CharacterBehaviour<T> : CursedBehaviour, IDamageable, IEyesightClient,
     ICharacterPhysicsController {
     // Components
-    private Gun gun;
+    private IWeapon weapon;
+    private Eyesight eyesight;
     private CharacterPhysics physics;
+    private Rigidbody2D rBody2D;
 
     // Private state fields
-    private T currentState;
+    protected T currentState { get; private set;  }
 
     // Interface
-    [SerializeField] protected bool hasGun;
+    [SerializeField] protected bool hasWeapon;
     private IEyesightClient eyesightClientImplementation;
 
     /* Required methods */
 
     protected virtual Dictionary<T, StateFlags> stateFlagsMap => null;
     protected abstract T DefaultState();
-    public abstract bool ShouldJump();
-    public abstract float GetWalkSpeed();
-    public abstract float GetJumpSpeed();
+
+    /* Methods for overloading */
+
+    public virtual bool ShouldJump() => false;
+    public virtual float GetWalkSpeed() => 0f;
+    public virtual float GetJumpSpeed() => 0f;
 
     /* Event handlers */
 
-    public abstract void Damage(DamageType damageType);
-    public abstract void OnSeenObject(GameObject obj);
-    public abstract void OnWalk(WalkType walkType);
-    public abstract void OnSuccessfulJump();
-    public abstract void OnGroundChange(Vector2 groundNormal, int offGroundTicks);
+    public virtual void Damage(DamageType damageType) {}
+    public virtual void OnSeenObject(GameObject obj) {}
+    public virtual void OnWalk(WalkType walkType) {}
+    public virtual void OnSuccessfulJump() {}
+    public virtual void OnGroundChange(Vector2 groundNormal, int offGroundTicks) {}
 
     /* Child API */
-
     protected override void Awake() {
         base.Awake();
 
-        gun = GetComponent<Gun>();
+        weapon = GetComponent<IWeapon>();
+        eyesight = GetComponent<Eyesight>();
         physics = GetComponent<CharacterPhysics>();
+        rBody2D = GetComponent<Rigidbody2D>();
 
         SetStateInner(DefaultState());
     }
 
-    protected void SetState(T newState) {
+    public void LookInDirection(Vector2 direction) {
+        eyesight.sightDirection = direction;
+    }
+
+    public void SetState(T newState) {
         if (currentState.Equals(newState)) {
             return;
         }
@@ -61,7 +82,12 @@ public abstract class CharacterBehaviour<T> : CursedBehaviour, IDamageable, IEye
         SetStateInner(newState);
     }
 
-    protected bool Shoot(float angle) => hasGun && gun.Shoot(angle);
+    public bool Attack() {
+        float angle = Vector2.SignedAngle(Vector2.right, eyesight.sightDirection);
+        return hasWeapon && weapon.Attack(angle);
+    }
+
+    public bool Attack(GameObject obj) => hasWeapon && weapon.Attack(obj);
 
     /* Private API */
 
@@ -78,11 +104,11 @@ public abstract class CharacterBehaviour<T> : CursedBehaviour, IDamageable, IEye
 
     private void ApplyFlags(StateFlags flags) {
         // Gun
-        hasGun = flags.gun;
-        gun.enabled = flags.gun;
+        hasWeapon = flags.attack;
 
         // Physics
         physics.enabled = flags.physics;
+        rBody2D.simulated = flags.physics;
     }
 
     public LayerMask GetSightMask() => stateFlagsMap[currentState].sightMask;

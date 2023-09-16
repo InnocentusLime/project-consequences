@@ -1,10 +1,11 @@
-//#define DEBUG_EYESIGHT_RAYS
+// #define DEBUG_EYESIGHT_RAYS
 
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Assertions;
 using UnityEngine.Events;
 using UnityEngine.PlayerLoop;
 
@@ -16,8 +17,13 @@ public interface IEyesightClient {
 }
 
 public class Eyesight : MonoBehaviour {
-    public Vector2 sightDirection;
     public Vector2 rayOffset;
+
+    private Vector2 implSightDirection = Vector2.right;
+    public Vector2 sightDirection {
+        get => implSightDirection;
+        set => implSightDirection = value.normalized;
+    }
 
     [SerializeField] private float rayLength;
     [SerializeField] private float sightAngle;
@@ -38,9 +44,11 @@ public class Eyesight : MonoBehaviour {
             return;
         }
 
+        Assert.IsTrue(sightAngleStep > 0.01f);
+        Assert.IsTrue(sightAngle > 0f);
+
         for (float rayAngle = -sightAngle / 2f; rayAngle <= sightAngle / 2f; rayAngle += sightAngleStep) {
-            Vector2 raycastDirection = new Vector2(sightDirection.x * Mathf.Cos(rayAngle * Mathf.Deg2Rad),
-                sightDirection.x * Mathf.Sin(rayAngle * Mathf.Deg2Rad));
+            Vector2 raycastDirection = Quaternion.AngleAxis(rayAngle, Vector3.forward) * implSightDirection;
 
             RaycastHit2D hit = Physics2D.Raycast(raycastStart, raycastDirection, rayLength, sightMask);
 
@@ -62,7 +70,6 @@ public class Eyesight : MonoBehaviour {
             }
 
             client.OnSeenObject(hit.collider.gameObject);
-            break;
         }
     }
 }
