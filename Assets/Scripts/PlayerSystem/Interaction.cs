@@ -10,7 +10,6 @@ public class Interaction : MonoBehaviour {
         interactableLayerFilter.useTriggers = true;
     }
 
-    // TODO TryGetComponent is better than `GetComponent` it seems. See where we can place it
     // TODO fix in the future to make interaction collider more editable
     public void Interact() {
         int interactionCount = Physics2D.OverlapBox(
