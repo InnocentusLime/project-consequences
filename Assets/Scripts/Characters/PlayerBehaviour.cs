@@ -58,7 +58,11 @@ public class PlayerBehaviour : CharacterBehaviour<PlayerState>, IEdible {
 
     public override float GetWalkSpeed() {
         float moveDirection = horizontalSpeed * Input.GetAxisRaw("Horizontal");
-        LookInDirection(new Vector2(Mathf.Sign(moveDirection), 0));
+
+        if (moveDirection != 0) {
+            LookInDirection(new Vector2(Mathf.Sign(moveDirection), 0));
+        }
+
         return moveDirection;
     }
 
