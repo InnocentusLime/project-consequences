@@ -80,9 +80,7 @@ public class PlayerBehaviour : CharacterBehaviour<PlayerState>, IEdible {
     }
 
     private void Update() {
-        Vector2 mousePosition = mainCamera.ScreenToWorldPoint(Input.mousePosition);
-        Vector2 lookDirection = mousePosition - (Vector2) transform.position;
-        LookInDirection(lookDirection);
+        Vector2 lookDirection = GetEyeSightDirection();
 
         if (Input.GetMouseButtonDown(0)) {
             if (Attack()) {
