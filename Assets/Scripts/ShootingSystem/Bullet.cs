@@ -11,7 +11,7 @@ public class Bullet : MonoBehaviour {
     private void Start() {
         Rigidbody2D rigidBody2D = GetComponent<Rigidbody2D>();
 
-        float angle = (rigidBody2D.rotation + 90) * Mathf.Deg2Rad;
+        float angle = rigidBody2D.rotation * Mathf.Deg2Rad;
         rigidBody2D.velocity = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * moveSpeed;
 
         Destroy(gameObject, lifeTime);

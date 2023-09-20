@@ -59,7 +59,7 @@ public class PlayerBehaviour : CursedBehaviour {
     private float ShootingAngle() {
         Vector2 mousePosition = mainCamera.ScreenToWorldPoint(Input.mousePosition);
 
-        return Vector2.SignedAngle(Vector2.up, mousePosition - (Vector2) transform.localPosition);
+        return Vector2.SignedAngle(Vector2.right, mousePosition - (Vector2) transform.position);
     }
 
     protected override void OnConsequenceTime() {
