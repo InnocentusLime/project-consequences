@@ -9,8 +9,13 @@ namespace WeaponSys {
         public float shootDistance = 10.0f;
 
         private bool isCoolingDown;
+        private Collider2D shooter;
 
         private readonly RaycastHit2D[] hits = new RaycastHit2D[1];
+
+        private void Awake() {
+            shooter = gameObject.GetComponent<Collider2D>();
+        }
 
         public bool Attack(float shootingAngle) {
             if (!CanShoot()) {
@@ -25,8 +30,6 @@ namespace WeaponSys {
             LayerMask mask = LayerMask.GetMask("Entities") |
                              LayerMask.GetMask("Ground") |
                              LayerMask.GetMask("Player");
-
-            Collider2D shooter = gameObject.GetComponent<Collider2D>();
 
             int objects = shooter.Raycast(new Vector2(-(shootingAngle - 90) / 90, 0), hits, shootDistance, mask);
 
