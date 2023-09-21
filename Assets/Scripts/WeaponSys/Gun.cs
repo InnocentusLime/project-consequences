@@ -10,6 +10,8 @@ namespace WeaponSys {
 
         private bool isCoolingDown;
 
+        private readonly RaycastHit2D[] hits = new RaycastHit2D[1];
+
         public bool Attack(float shootingAngle) {
             if (!CanShoot()) {
                 return false;
@@ -23,8 +25,6 @@ namespace WeaponSys {
             LayerMask mask = LayerMask.GetMask("Entities") |
                              LayerMask.GetMask("Ground") |
                              LayerMask.GetMask("Player");
-
-            RaycastHit2D[] hits = new RaycastHit2D[20];
 
             Collider2D shooter = gameObject.GetComponent<Collider2D>();
 
