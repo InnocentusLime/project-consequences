@@ -56,15 +56,7 @@ public class PlayerBehaviour : CharacterBehaviour<PlayerState>, IEdible {
 
     public override bool ShouldJump() => Input.GetKey(KeyCode.Space);
 
-    public override float GetWalkSpeed() {
-        float moveDirection = horizontalSpeed * Input.GetAxisRaw("Horizontal");
-
-        if (moveDirection != 0) {
-            LookInDirection(new Vector2(Mathf.Sign(moveDirection), 0));
-        }
-
-        return moveDirection;
-    }
+    public override float GetWalkSpeed() => horizontalSpeed * Input.GetAxisRaw("Horizontal");
 
     public override float GetJumpSpeed() => jumpTakeoffSpeed;
 
@@ -84,6 +76,12 @@ public class PlayerBehaviour : CharacterBehaviour<PlayerState>, IEdible {
     }
 
     private void Update() {
+        float walkSpeed = GetWalkSpeed();
+
+        if (walkSpeed != 0) {
+            LookInDirection(new Vector2(Mathf.Sign(walkSpeed), 0));
+        }
+        
         Vector2 lookDirection = GetEyeSightDirection();
 
         if (Input.GetMouseButtonDown(0)) {
