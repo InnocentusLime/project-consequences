@@ -1,3 +1,5 @@
+//#define DEBUG_BULLET_WAY
+
 using System.Collections;
 using UnityEngine;
 
@@ -21,12 +23,18 @@ namespace WeaponSys {
             LayerMask mask = LayerMask.GetMask("Entities") |
                              LayerMask.GetMask("Ground") |
                              LayerMask.GetMask("Player");
-            
+
             RaycastHit2D[] hits = new RaycastHit2D[20];
 
             Collider2D shooter = gameObject.GetComponent<Collider2D>();
 
             int objects = shooter.Raycast(new Vector2(-(shootingAngle - 90) / 90, 0), hits, shootDistance, mask);
+
+#if DEBUG_BULLET_WAY
+Debug.DrawLine(shooter.transform.position,
+                new Vector3(shooter.transform.position.x - shootDistance * (shootingAngle - 90) / 90, shooter.transform.position.y, 0),
+                new Color(1, 0, 0), 1);
+#endif
 
             if (objects != 0 && hits[0].collider.TryGetComponent(out IDamageable damageable)) {
                 damageable.Damage(DamageType.BulletHit);
