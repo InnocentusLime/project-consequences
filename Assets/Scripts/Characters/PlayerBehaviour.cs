@@ -79,9 +79,9 @@ public class PlayerBehaviour : CharacterBehaviour<PlayerState>, IEdible {
         float walkSpeed = GetWalkSpeed();
 
         if (walkSpeed != 0) {
-            LookInDirection(new Vector2(Mathf.Sign(walkSpeed), 0));
+            LookInDirection(new Vector2(walkSpeed, 0));
         }
-        
+
         Vector2 lookDirection = GetEyeSightDirection();
 
         if (Input.GetMouseButtonDown(0)) {
