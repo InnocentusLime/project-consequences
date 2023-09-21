@@ -14,30 +14,33 @@ public enum PlayerState {
 
 [Serializable]
 public class PlayerShootEvent : UnityEvent<Vector2, Vector2> {
-
 }
 
 [RequireComponent(typeof(Interaction))]
 public class PlayerBehaviour : CharacterBehaviour<PlayerState>, IEdible {
-    private static readonly Dictionary<PlayerState, StateFlags> stateFlagsMapImpl = new(){
-        { PlayerState.Normal , new StateFlags {
-            attack = true,
-            sightMask = 0,
-            reportMask = 0,
-            physics = true,
-        }},
-        { PlayerState.Haunted , new StateFlags {
-            attack = false,
-            sightMask = 0,
-            reportMask = 0,
-            physics = true,
-        }},
-        { PlayerState.Dead , new StateFlags {
-            attack = false,
-            sightMask = 0,
-            reportMask = 0,
-            physics = false,
-        }},
+    private static readonly Dictionary<PlayerState, StateFlags> stateFlagsMapImpl = new() {
+        {
+            PlayerState.Normal, new StateFlags {
+                attack = true,
+                sightMask = 0,
+                reportMask = 0,
+                physics = true,
+            }
+        }, {
+            PlayerState.Haunted, new StateFlags {
+                attack = false,
+                sightMask = 0,
+                reportMask = 0,
+                physics = true,
+            }
+        }, {
+            PlayerState.Dead, new StateFlags {
+                attack = false,
+                sightMask = 0,
+                reportMask = 0,
+                physics = false,
+            }
+        },
     };
 
     protected override Dictionary<PlayerState, StateFlags> stateFlagsMap => stateFlagsMapImpl;
@@ -73,9 +76,13 @@ public class PlayerBehaviour : CharacterBehaviour<PlayerState>, IEdible {
     }
 
     private void Update() {
-        Vector2 mousePosition = mainCamera.ScreenToWorldPoint(Input.mousePosition);
-        Vector2 lookDirection = mousePosition - (Vector2)transform.position;
-        LookInDirection(lookDirection);
+        float walkSpeed = GetWalkSpeed();
+
+        if (walkSpeed != 0) {
+            LookInDirection(new Vector2(walkSpeed, 0));
+        }
+
+        Vector2 lookDirection = GetEyeSightDirection();
 
         if (Input.GetMouseButtonDown(0)) {
             if (Attack()) {

@@ -77,6 +77,10 @@ public abstract class CharacterBehaviour<T> : CursedBehaviour, IDamageable, IEye
         eyesight.sightDirection = direction;
     }
 
+    public Vector2 GetEyeSightDirection() {
+        return eyesight.sightDirection;
+    }
+
     public void SetState(T newState) {
         if (currentState.Equals(newState)) {
             return;
