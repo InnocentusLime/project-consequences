@@ -1,4 +1,4 @@
-//#define DEBUG_BULLET_WAY
+#define DEBUG_BULLET_WAY
 
 using System.Collections;
 using UnityEngine;
@@ -31,11 +31,14 @@ namespace WeaponSys {
                              LayerMask.GetMask("Ground") |
                              LayerMask.GetMask("Player");
 
-            int objects = shooter.Raycast(new Vector2(-(shootingAngle - 90) / 90, 0), hits, shootDistance, mask);
+            float deg2Rad = shootingAngle * Mathf.Deg2Rad;
+            int objects = shooter.Raycast(new Vector2(Mathf.Cos(deg2Rad), Mathf.Sin(deg2Rad)), hits, shootDistance,
+                mask);
 
 #if DEBUG_BULLET_WAY
 Debug.DrawLine(shooter.transform.position,
-                new Vector3(shooter.transform.position.x - shootDistance * (shootingAngle - 90) / 90, shooter.transform.position.y, 0),
+                new Vector3(shooter.transform.position.x + shootDistance * Mathf.Cos(deg2Rad),
+                            shooter.transform.position.y+ shootDistance * Mathf.Sin(deg2Rad), 0),
                 new Color(1, 0, 0), 1);
 #endif
 
