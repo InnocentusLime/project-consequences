@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Characters;
+using UnityEngine;
 
 namespace WeaponSys {
     public class ZombieFist: MonoBehaviour, IWeapon {

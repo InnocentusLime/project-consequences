@@ -1,6 +1,7 @@
-#define DEBUG_BULLET_WAY
+// #define DEBUG_BULLET_RAYS
 
 using System.Collections;
+using Characters;
 using UnityEngine;
 
 namespace WeaponSys {
@@ -9,9 +10,13 @@ namespace WeaponSys {
         public float shootDistance = 10.0f;
 
         private bool isCoolingDown;
+
         private Collider2D shooter;
 
         private readonly RaycastHit2D[] hits = new RaycastHit2D[1];
+        private readonly LayerMask collisionMask = LayerMask.GetMask("Entities") |
+                                                   LayerMask.GetMask("Ground") |
+                                                   LayerMask.GetMask("Player");
 
         private void Awake() {
             shooter = gameObject.GetComponent<Collider2D>();
@@ -22,24 +27,19 @@ namespace WeaponSys {
                 return false;
             }
 
-            if (!cooldownDuration.Equals(0.0f)) {
-                isCoolingDown = true;
-                StartCoroutine(CooldownRoutine(cooldownDuration));
-            }
+            isCoolingDown = true;
+            StartCoroutine(CooldownRoutine(cooldownDuration));
 
-            LayerMask mask = LayerMask.GetMask("Entities") |
-                             LayerMask.GetMask("Ground") |
-                             LayerMask.GetMask("Player");
+            shootingAngle *= Mathf.Deg2Rad;
+            Vector2 shootingDirection = new Vector2(Mathf.Cos(shootingAngle), Mathf.Sin(shootingAngle));
+            int objects = shooter.Raycast(shootingDirection, hits, shootDistance, collisionMask);
 
-            float deg2Rad = shootingAngle * Mathf.Deg2Rad;
-            int objects = shooter.Raycast(new Vector2(Mathf.Cos(deg2Rad), Mathf.Sin(deg2Rad)), hits, shootDistance,
-                mask);
-
-#if DEBUG_BULLET_WAY
-Debug.DrawLine(shooter.transform.position,
-                new Vector3(shooter.transform.position.x + shootDistance * Mathf.Cos(deg2Rad),
-                            shooter.transform.position.y+ shootDistance * Mathf.Sin(deg2Rad), 0),
-                new Color(1, 0, 0), 1);
+#if DEBUG_BULLET_RAYS
+            Debug.DrawLine(
+                transform.position,
+                (Vector2)transform.position + shootDistance * shootingDirection,
+                Color.red, 1
+            );
 #endif
 
             if (objects != 0 && hits[0].collider.TryGetComponent(out IDamageable damageable)) {
