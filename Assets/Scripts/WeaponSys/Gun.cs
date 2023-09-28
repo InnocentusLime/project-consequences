@@ -14,9 +14,7 @@ namespace WeaponSys {
         private Collider2D shooter;
 
         private readonly RaycastHit2D[] hits = new RaycastHit2D[1];
-        private readonly LayerMask collisionMask = LayerMask.GetMask("Entities") |
-                                                   LayerMask.GetMask("Ground") |
-                                                   LayerMask.GetMask("Player");
+        private readonly LayerMask collisionMask = (1 << 6) | (1 << 9) | (1 << 10); // Must be "Ground | Entity | Player"
 
         private void Awake() {
             shooter = gameObject.GetComponent<Collider2D>();
