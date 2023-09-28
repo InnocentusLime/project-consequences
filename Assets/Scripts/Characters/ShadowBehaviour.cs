@@ -19,18 +19,21 @@ namespace Characters {
                 sightMask = 0,
                 reportMask = 0,
                 physics = false,
+                unitySimulate = false,
             }},
             { ShadowState.Awakened , new StateFlags {
                 attack = true,
                 sightMask = (1 << 6) | (1 << 10 ), // Must be "Ground | Player"
                 reportMask = 1 << 10, // Must be "Player"
                 physics = false,
+                unitySimulate = false,
             }},
             { ShadowState.Ascended , new StateFlags {
                 attack = false,
                 sightMask = 0, // Must be "Ground | Player"
                 reportMask = 0, // Must be "Player"
                 physics = false,
+                unitySimulate = false,
             }},
         };
 

@@ -14,6 +14,7 @@ namespace Characters {
         public LayerMask sightMask;
         public LayerMask reportMask;
         public bool physics; // NOTE: disabling physics disables the object from being visible
+        public bool unitySimulate;
     }
 
     public interface IWeapon {
@@ -114,8 +115,8 @@ namespace Characters {
             hasWeapon = flags.attack;
 
             // Physics
-            physics.enabled = flags.physics;
-            rBody2D.simulated = flags.physics;
+            physics.enabled = flags is { physics: true, unitySimulate: true };
+            rBody2D.simulated = flags.unitySimulate;
         }
 
         public LayerMask GetSightMask() => stateFlagsMap[currentState].sightMask;

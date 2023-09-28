@@ -26,6 +26,7 @@ namespace Characters {
                     sightMask = 0,
                     reportMask = 0,
                     physics = true,
+                    unitySimulate = true,
                 }
             }, {
                 PlayerState.Haunted, new StateFlags {
@@ -33,6 +34,7 @@ namespace Characters {
                     sightMask = 0,
                     reportMask = 0,
                     physics = true,
+                    unitySimulate = true,
                 }
             }, {
                 PlayerState.Dead, new StateFlags {
@@ -40,6 +42,7 @@ namespace Characters {
                     sightMask = 0,
                     reportMask = 0,
                     physics = false,
+                    unitySimulate = false,
                 }
             },
         };

@@ -19,18 +19,21 @@ namespace Characters {
                 sightMask = 0,
                 reportMask = 0,
                 physics = false,
+                unitySimulate = false,
             }},
             { VenusState.Active, new StateFlags {
                 attack = true,
                 sightMask = (1 << 6) | (1 << 9) | (1 << 10), // Must be "Ground | Entity | Player"
                 reportMask = (1 << 9) | (1 << 10), // Must be "Entity | Player"
                 physics = false,
+                unitySimulate = false,
             }},
             { VenusState.Dead, new StateFlags {
                 attack = false,
                 sightMask = 0,
                 reportMask = 0,
                 physics = false,
+                unitySimulate = false,
             }},
         };
 
