@@ -1,7 +1,8 @@
-// #define DEBUG_BULLET_RAYS
+#define DEBUG_BULLET_RAYS
 
 using System.Collections;
 using Characters;
+using Extensions;
 using UnityEngine;
 
 namespace WeaponSys {
@@ -41,6 +42,9 @@ namespace WeaponSys {
 #endif
 
             if (objects != 0 && hits[0].collider.TryGetComponent(out IDamageable damageable)) {
+                if (hits[0].collider.TryGetComponent(out BulletInetria inert)) {
+                    inert.inerita = shootingDirection;
+                }
                 damageable.Damage(DamageType.BulletHit);
             }
 
