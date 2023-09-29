@@ -35,7 +35,6 @@ namespace Base {
         [SerializeField] private float gravityModifier = 1f;
         [SerializeField] private LayerMask collisionMask;
         [SerializeField] private float minGroundNormalY = .65f;
-        [SerializeField] private bool persistentSpeedFriction = true;
 
         // Object state. Reset when needed
         private int ticksOffGround;
@@ -49,6 +48,9 @@ namespace Base {
         private ICharacterPhysicsController controller;
         private ContactFilter2D contactFilter;
         private readonly RaycastHit2D[] hitBuffer = new RaycastHit2D[16];
+
+        // Public API
+        public Vector2 lastVelocity { get; private set; }
 
         private void Awake() {
             rb = GetComponent<Rigidbody2D>();
@@ -70,13 +72,13 @@ namespace Base {
 
         private void FixedUpdate() {
             bool isGrounded = IsOnGround();
-            int oldTicksOffGround = ticksOffGround;
             oldGroundNormal = groundNormal;
             Vector2 alongGround = -Vector2.Perpendicular(groundNormal);
 
             ticksOffGround = Math.Min(ticksOffGround + 1, 100);
             groundNormal = Vector2.up;
 
+            lastVelocity = Vector2.zero;
             ProcessWalking(alongGround * controller.GetWalkSpeed());
             ProcessJump(isGrounded);
 
@@ -128,7 +130,7 @@ namespace Base {
 
         private void ProcessPersistentSpeed() {
             Vector2 gravity = Physics2D.gravity * (Time.fixedDeltaTime * gravityModifier);
-            velocity = Move(velocity + gravity, true, persistentSpeedFriction);
+            velocity = Move(velocity + gravity, true, true);
         }
 
         private void GroundSnapping() {
@@ -150,7 +152,8 @@ namespace Base {
 
         /* Private API */
 
-        // TODO this doesn't work well when infinite friction is disabled. I should fix that later
+        // WONTFIX this doesn't work well when infinite friction is disabled. I should fix that later
+        // NOTE this method also adds to lastVelocity.
         private Vector2 Move(Vector2 moveVelocity, bool doGroundCheck, bool infiniteGroundFriction) {
             Vector2 deltaPosition = moveVelocity * Time.fixedDeltaTime;
             float distance = deltaPosition.magnitude;
@@ -196,6 +199,7 @@ namespace Base {
         Debug.DrawLine(pos - deltaPosition.normalized, pos, Color.yellow);
 #endif
 
+            lastVelocity += moveVelocity;
             return moveVelocity;
         }
 
