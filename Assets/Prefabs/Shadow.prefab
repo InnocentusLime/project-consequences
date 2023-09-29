@@ -117,7 +117,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rayOffset: {x: 0, y: 0}
-  rayLength: 5
+  rayLength: 6
   sightAngle: 10
   sightAngleStep: 1
 --- !u!50 &6518919059184298559
