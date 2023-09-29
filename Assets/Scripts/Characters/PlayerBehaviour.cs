@@ -47,6 +47,7 @@ namespace Characters {
         protected override Dictionary<PlayerState, StateFlags> stateFlagsMap => stateFlagsMapImpl;
 
         private Interaction interaction;
+        private SpriteRenderer spriteRenderer;
 
         [SerializeField] private float horizontalSpeed;
         [SerializeField] private float jumpTakeoffSpeed;
@@ -73,6 +74,13 @@ namespace Characters {
         }
 
         private void Update() {
+            spriteRenderer.color = currentState switch {
+                PlayerState.Normal => Color.red,
+                PlayerState.Dead => Color.red,
+                PlayerState.Haunted => new Color(0.4f, 0f, 0f),
+                _ => throw new ArgumentOutOfRangeException()
+            };
+
             float walkSpeed = GetWalkSpeed();
 
             if (walkSpeed != 0) {
