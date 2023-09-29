@@ -1,3 +1,5 @@
+#define ZOMBIE_FEATURE_BULLET_INERTIA
+
 using System;
 using System.Collections.Generic;
 using Base;
@@ -9,6 +11,7 @@ using WeaponSys;
 namespace Characters {
     public enum ZombieState {
         Normal,
+        Sleeping,
         Resurrected,
         Dead,
         Angered,
@@ -18,6 +21,12 @@ namespace Characters {
     public class ZombieBehaviour : CharacterBehaviour<ZombieState>, IEdible {
         private static readonly Dictionary<ZombieState, StateFlags> stateFlagsMapImpl = new(){
             { ZombieState.Normal, new StateFlags {
+                attack = false,
+                sightMask = (1 << 6) | (1 << 10 ), // Must be "Ground | Player"
+                reportMask = 1 << 10, // Must be "Player"
+                physicsType = CharacterPhysicsType.CharacterPhysics,
+            }},
+            { ZombieState.Sleeping, new StateFlags {
                 attack = false,
                 sightMask = (1 << 6) | (1 << 10 ), // Must be "Ground | Player"
                 reportMask = 1 << 10, // Must be "Player"
@@ -57,6 +66,7 @@ namespace Characters {
         private void Update() {
             spriteRenderer.color = currentState switch {
                 ZombieState.Normal => new Color(0f, 147.0f / 255, 27.0f / 255),
+                ZombieState.Sleeping => new Color(0f, 147.0f / 255, 27.0f / 255),
                 ZombieState.Resurrected => new Color(0f, 147.0f / 255, 27.0f / 255),
                 ZombieState.Dead => new Color(0f, 0f, 0f),
                 ZombieState.Angered => new Color(100.0f / 255, 147.0f / 255, 27.0f / 255),
@@ -87,9 +97,11 @@ namespace Characters {
             SetState(newState);
         }
 
-        protected override ZombieState DefaultState() => ZombieState.Normal;
+        public ZombieState defaultState;
+        protected override ZombieState DefaultState() => defaultState;
 
         public override float GetWalkSpeed() => currentState switch {
+            ZombieState.Sleeping => 0f,
             ZombieState.Normal => 1f,
             ZombieState.Resurrected => 8f,
             ZombieState.Dead => 0f,
@@ -113,6 +125,11 @@ namespace Characters {
 
         public override void Damage(DamageType damageType) {
             SetState(ZombieState.Dead);
+#if ZOMBIE_FEATURE_BULLET_INERTIA
+            if (damageType == DamageType.BulletHit && TryGetComponent(out BulletInetria inert) && TryGetComponent(out Rigidbody2D body)) {
+                body.velocity += inert.inerita * 10f;
+            }
+#endif
 
             // TODO go to a different state
             if (damageType == DamageType.VenusEat) {
