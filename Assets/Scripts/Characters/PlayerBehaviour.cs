@@ -77,7 +77,7 @@ namespace Characters {
         private void Update() {
             spriteRenderer.color = currentState switch {
                 PlayerState.Normal => Color.red,
-                PlayerState.Dead => Color.red,
+                PlayerState.Dead => Color.black,
                 PlayerState.Haunted => new Color(0.4f, 0f, 0f),
                 _ => throw new ArgumentOutOfRangeException()
             };
