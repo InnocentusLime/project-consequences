@@ -71,6 +71,7 @@ namespace Characters {
             base.Awake();
 
             interaction = GetComponent<Interaction>();
+            spriteRenderer = GetComponent<SpriteRenderer>();
         }
 
         private void Update() {
