@@ -9,7 +9,7 @@ namespace WeaponSys {
         public bool Attack(float angle) {
             int numRes = Physics2D.OverlapBoxNonAlloc(
                 transform.position,
-                new Vector2(1.1f, 1f),
+                new Vector2(1.2f, 1f),
                 0,
                 collisionBuff,
                 mask);
