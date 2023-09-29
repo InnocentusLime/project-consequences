@@ -25,24 +25,21 @@ namespace Characters {
                     attack = true,
                     sightMask = 0,
                     reportMask = 0,
-                    physics = true,
-                    unitySimulate = true,
+                    physicsType = CharacterPhysicsType.CharacterPhysics,
                 }
             }, {
                 PlayerState.Haunted, new StateFlags {
                     attack = false,
                     sightMask = 0,
                     reportMask = 0,
-                    physics = true,
-                    unitySimulate = true,
+                    physicsType = CharacterPhysicsType.CharacterPhysics,
                 }
             }, {
                 PlayerState.Dead, new StateFlags {
                     attack = false,
                     sightMask = 0,
                     reportMask = 0,
-                    physics = false,
-                    unitySimulate = false,
+                    physicsType = CharacterPhysicsType.UnityPhysics,
                 }
             },
         };
@@ -50,7 +47,6 @@ namespace Characters {
         protected override Dictionary<PlayerState, StateFlags> stateFlagsMap => stateFlagsMapImpl;
 
         private Interaction interaction;
-        private Camera mainCamera;
 
         [SerializeField] private float horizontalSpeed;
         [SerializeField] private float jumpTakeoffSpeed;
@@ -74,9 +70,6 @@ namespace Characters {
             base.Awake();
 
             interaction = GetComponent<Interaction>();
-
-            mainCamera = Camera.main;
-            Assert.IsNotNull(mainCamera);
         }
 
         private void Update() {
@@ -88,7 +81,7 @@ namespace Characters {
 
             Vector2 lookDirection = GetEyeSightDirection();
 
-            if (Input.GetMouseButtonDown(0)) {
+            if (Input.GetKeyDown(KeyCode.K)) {
                 if (Attack()) {
                     playerShootEvent.Invoke(lookDirection, transform.position);
                 }

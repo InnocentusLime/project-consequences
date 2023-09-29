@@ -21,29 +21,25 @@ namespace Characters {
                 attack = false,
                 sightMask = (1 << 6) | (1 << 10 ), // Must be "Ground | Player"
                 reportMask = 1 << 10, // Must be "Player"
-                physics = true,
-                unitySimulate = true,
+                physicsType = CharacterPhysicsType.CharacterPhysics,
             }},
             { ZombieState.Resurrected, new StateFlags {
                 attack = true,
                 sightMask = 0,
                 reportMask = 0,
-                physics = true,
-                unitySimulate = true,
+                physicsType = CharacterPhysicsType.CharacterPhysics,
             }},
             { ZombieState.Dead, new StateFlags {
                 attack = false,
                 sightMask = 0,
                 reportMask = 0,
-                physics = false,
-                unitySimulate = true,
+                physicsType = CharacterPhysicsType.UnityPhysics,
             }},
             { ZombieState.Angered, new StateFlags {
                 attack = true,
                 sightMask = 0,
                 reportMask = 0,
-                physics = true,
-                unitySimulate = true,
+                physicsType = CharacterPhysicsType.CharacterPhysics,
             }},
         };
 

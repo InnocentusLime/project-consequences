@@ -5,16 +5,22 @@ using System.Collections.Generic;
 using Base;
 using Extensions;
 using UnityEngine;
+using UnityEngine.Serialization;
 using WeaponSys;
 
 namespace Characters {
+    public enum CharacterPhysicsType {
+        NoPhysics,
+        UnityPhysics,
+        CharacterPhysics,
+    }
+
     [Serializable]
     public struct StateFlags {
         public bool attack;
         public LayerMask sightMask;
         public LayerMask reportMask;
-        public bool physics; // NOTE: disabling physics disables the object from being visible
-        public bool unitySimulate;
+        public CharacterPhysicsType physicsType;
     }
 
     public interface IWeapon {
@@ -33,7 +39,7 @@ namespace Characters {
         // Components
         private IWeapon weapon;
         private Eyesight eyesight;
-        private CharacterPhysics physics;
+        private CharacterPhysics characterPhysics;
         private Rigidbody2D rBody2D;
 
         // Private state fields
@@ -68,10 +74,10 @@ namespace Characters {
 
             weapon = GetComponent<IWeapon>();
             eyesight = GetComponent<Eyesight>();
-            physics = GetComponent<CharacterPhysics>();
+            characterPhysics = GetComponent<CharacterPhysics>();
             rBody2D = GetComponent<Rigidbody2D>();
 
-            SetStateInner(DefaultState());
+            SetStateInner(DefaultState(), true);
         }
 
         public void LookInDirection(Vector2 direction) {
@@ -99,24 +105,58 @@ namespace Characters {
 
         /* Private API */
 
-        private void SetStateInner(T newState) {
+        private void SetStateInner(T newState, bool init = false) {
 #if CHARACTER_BEHAVIOUR_DEBUG_STATE_TRANSITIONS
         Debug.Log(this.GetType().Name + ": " +
             currentState + " -> " + newState + "\nnew flags:\n" +
             JsonUtility.ToJson(stateFlagsMap[newState], true));
 #endif
 
+            T oldState = currentState;
             currentState = newState;
-            ApplyFlags(stateFlagsMap[currentState]);
+            ApplyFlags(stateFlagsMap[currentState], stateFlagsMap[oldState], init);
         }
 
-        private void ApplyFlags(StateFlags flags) {
+        private void ApplyFlags(StateFlags newFlags, StateFlags oldFlags, bool init) {
             // Gun
-            hasWeapon = flags.attack;
+            hasWeapon = newFlags.attack;
 
             // Physics
-            physics.enabled = flags is { physics: true, unitySimulate: true };
-            rBody2D.simulated = flags.unitySimulate;
+            if (newFlags.physicsType != oldFlags.physicsType || init) {
+                // Cleanup old physics
+                switch (oldFlags.physicsType) {
+                    case CharacterPhysicsType.NoPhysics:
+                        break;
+                    case CharacterPhysicsType.UnityPhysics:
+                        rBody2D.velocity = Vector2.zero;
+                        break;
+                    case CharacterPhysicsType.CharacterPhysics:
+                        characterPhysics.enabled = false;
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+
+                // Init new physics
+                switch (newFlags.physicsType) {
+                    case CharacterPhysicsType.NoPhysics:
+                        rBody2D.simulated = false;
+                        rBody2D.bodyType = RigidbodyType2D.Static;
+                        break;
+                    case CharacterPhysicsType.UnityPhysics:
+                        rBody2D.simulated = true;
+                        rBody2D.bodyType = RigidbodyType2D.Dynamic;
+                        rBody2D.velocity = characterPhysics.lastVelocity;
+                        break;
+                    case CharacterPhysicsType.CharacterPhysics:
+                        rBody2D.simulated = true;
+                        characterPhysics.enabled = true;
+                        rBody2D.bodyType = RigidbodyType2D.Kinematic;
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }
         }
 
         public LayerMask GetSightMask() => stateFlagsMap[currentState].sightMask;
