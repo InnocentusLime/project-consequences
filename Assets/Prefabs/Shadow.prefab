@@ -117,7 +117,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rayOffset: {x: 0, y: 0}
-  rayLength: 3
+  rayLength: 5
   sightAngle: 10
   sightAngleStep: 1
 --- !u!50 &6518919059184298559
@@ -159,7 +159,6 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 0
   minGroundNormalY: 0.65
-  persistentSpeedFriction: 1
 --- !u!114 &5131871779677449531
 MonoBehaviour:
   m_ObjectHideFlags: 0
