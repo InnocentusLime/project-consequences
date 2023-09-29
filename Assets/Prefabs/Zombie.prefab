@@ -13,7 +13,6 @@ GameObject:
   - component: {fileID: 2141171464906668070}
   - component: {fileID: 2141171464906668071}
   - component: {fileID: 7033961169730457985}
-  - component: {fileID: 8558586547861089836}
   - component: {fileID: 69685420947333786}
   - component: {fileID: 6891870216600701367}
   - component: {fileID: 3479023847193599356}
@@ -80,8 +79,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6,
-    type: 3}
+  m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
   m_Color: {r: 0, g: 0.5754717, b: 0.10693558, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -155,33 +153,6 @@ MonoBehaviour:
   rayLength: 2
   sightAngle: 20
   sightAngleStep: 4
---- !u!114 &8558586547861089836
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2141171464906668069}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a55f63eebeab585a5a0f76ba8d82a5d8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  damageEvent:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 8558586547861089836}
-        m_TargetAssemblyTypeName: Damageable, Assembly-CSharp
-        m_MethodName: Damage
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
 --- !u!114 &69685420947333786
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -212,7 +183,6 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   minGroundNormalY: 0.65
-  persistentSpeedFriction: 1
 --- !u!114 &3479023847193599356
 MonoBehaviour:
   m_ObjectHideFlags: 0

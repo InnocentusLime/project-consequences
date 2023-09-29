@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 8859342448135087961}
   - component: {fileID: 8859342448135087962}
   - component: {fileID: 2357216374178401446}
-  - component: {fileID: 8796347596886266103}
   - component: {fileID: 4919673556801684170}
   - component: {fileID: 3249830886087557943}
   - component: {fileID: 483424635713150104}
@@ -80,8 +79,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6,
-    type: 3}
+  m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
   m_Color: {r: 0.4339623, g: 0.14453192, b: 0, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -108,33 +106,6 @@ MonoBehaviour:
   rayLength: 2
   sightAngle: 360
   sightAngleStep: 1
---- !u!114 &8796347596886266103
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8859342448135087972}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a55f63eebeab585a5a0f76ba8d82a5d8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  damageEvent:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 8796347596886266103}
-        m_TargetAssemblyTypeName: Damageable, Assembly-CSharp
-        m_MethodName: Damage
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
 --- !u!114 &4919673556801684170
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -155,9 +126,9 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8859342448135087972}
-  m_BodyType: 0
+  m_BodyType: 1
   m_Simulated: 1
-  m_UseFullKinematicContacts: 0
+  m_UseFullKinematicContacts: 1
   m_UseAutoMass: 0
   m_Mass: 1
   m_LinearDrag: 0
@@ -186,7 +157,6 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 0
   minGroundNormalY: 0.65
-  persistentSpeedFriction: 1
 --- !u!114 &4555691322337252327
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -275,8 +245,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6,
-    type: 3}
+  m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
   m_Color: {r: 0.06170094, g: 1, b: 0, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -360,8 +329,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: -2413806693520163455, guid: a86470a33a6bf42c4b3595704624658b,
-    type: 3}
+  m_Sprite: {fileID: -2413806693520163455, guid: a86470a33a6bf42c4b3595704624658b, type: 3}
   m_Color: {r: 1, g: 0.44920295, b: 0, a: 1}
   m_FlipX: 0
   m_FlipY: 0
